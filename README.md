@@ -44,7 +44,7 @@ All the REST APIs will begin with `/api/`
 - Table `users` - contains infos about registered users:
  > users(__id__, username, password)
 - Table `rentals` - contains info about rentals:
- > rentals(__id__, car_id, user_id, start_day, end_day, driver_age, extra_drivers, km_per_day, unlimited_km, insurance, price )
+ > rentals(__id__, car_id, user_id, start_day, end_day, driver_age, extra_drivers, extra_insurance, kilometer, unlimited_km, price )
 
 
 ## Main React Components
@@ -57,6 +57,7 @@ All the REST APIs will begin with `/api/`
 
 ## Screenshot
 
+<!--TODO addd screen shot -->
 ![Configurator Screenshot](./img/screenshot.jpg)
 
 ## Test users
