@@ -8,13 +8,13 @@ import Logo from "./img/logo.svg"
 function Header(props) {
     return <>
         <Navbar bg="dark" variant="dark" className="row justify-content-between">
-                <Col md={1}>
+                <Col md={1} sm={4}>
                     <Image src={Logo} height={50} rounded />
                 </Col>
                 <Col md={3}>
-                    <Navbar.Brand><b>CAR RENTAL</b></Navbar.Brand>
+                    <Navbar.Brand><b className="d-none d-sm-inline">CAR RENTAL</b></Navbar.Brand>
                 </Col>
-                <Col md={1}>
+                <Col md={2} sm={4}>
                     <Button variant={props.loggedIn? "danger" : "success"}>{props.loggedIn? "Logout" : "Login"}</Button>
                 </Col>
         </Navbar>
