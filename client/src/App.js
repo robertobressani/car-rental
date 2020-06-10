@@ -1,26 +1,28 @@
 import React from 'react';
-import logo from './logo.svg';
+import API from './api/API.js';
+import Header from './components/Header.js';
 import './App.css';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+class App extends React.Component{
+    constructor(props) {
+        super(props);
+        this.state={loggedIn:false};
+    }
+
+    componentDidMount(){
+        //at app load checks if the user is logged in
+        API.checkAuthentication().then(
+            ()=>this.setState({loggedIn:true})
+        ).catch(
+            //nothing to do, not authenticated
+        )
+    }
+
+    render(){
+        return <>
+            <Header loggedIn={this.state.loggedIn}/>
+        </>;
+    }
 }
 
 export default App;
