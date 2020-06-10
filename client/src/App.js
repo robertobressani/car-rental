@@ -2,6 +2,7 @@ import React from 'react';
 import API from './api/API.js';
 import Header from './components/Header.js';
 import {Container} from 'react-bootstrap';
+import { BrowserRouter as Router, Switch, Route} from 'react-router-dom';
 import './App.css';
 
 class App extends React.Component{
@@ -21,7 +22,12 @@ class App extends React.Component{
 
     render(){
         return <Container>
-            <Header loggedIn={this.state.loggedIn}/>
+            <Router>
+                <Header loggedIn={this.state.loggedIn}/>
+                <Switch>
+                    
+                </Switch>
+            </Router>
         </Container>;
     }
 }
