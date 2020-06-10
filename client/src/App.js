@@ -2,7 +2,11 @@ import React from 'react';
 import API from './api/API.js';
 import Header from './components/Header.js';
 import {Container} from 'react-bootstrap';
-import { BrowserRouter as Router, Switch, Route} from 'react-router-dom';
+import { BrowserRouter as Router, Switch, Route, Redirect} from 'react-router-dom';
+import CarList from './components/CarList.js';
+import Configurator from './components/Configurator.js';
+import Login from './components/Login.js';
+import Rentals from './components/Rentals.js';
 import './App.css';
 
 class App extends React.Component{
@@ -25,7 +29,22 @@ class App extends React.Component{
             <Router>
                 <Header loggedIn={this.state.loggedIn}/>
                 <Switch>
-                    
+                    <Route exact path="/cars">
+                        <CarList/>
+                    </Route>
+                    <Route path="/configurator" >
+                        <Configurator />
+                    </Route>
+                    <Route exact path="/login">
+                        <Login />
+                    </Route>
+                    <Route exact path="/rentals">
+                        <Rentals />
+                    </Route>
+                    <Route path="/">
+                        <Redirect to="/cars"/>
+                    </Route>
+
                 </Switch>
             </Router>
         </Container>;
