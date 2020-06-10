@@ -1,6 +1,6 @@
 import React from "react";
-import {Navbar, Nav, Row, Col, Image, Button} from "react-bootstrap";
-
+import {Navbar, Nav, Col, Image, Button} from "react-bootstrap";
+import { Switch, Route} from 'react-router-dom';
 import Logo from "./img/logo.svg"
 
 
@@ -15,7 +15,13 @@ function Header(props) {
                     <Navbar.Brand><b className="d-none d-sm-inline">CAR RENTAL</b></Navbar.Brand>
                 </Col>
                 <Col md={2} sm={4}>
-                    <Button variant={props.loggedIn? "danger" : "success"}>{props.loggedIn? "Logout" : "Login"}</Button>
+                    <Switch>
+                        <Route exact path="/login" />
+                        <Route path="/">
+                            <Button variant={props.loggedIn? "danger" : "success"}>{props.loggedIn? "Logout" : "Login"}</Button>
+                        </Route>
+                    </Switch>
+
                 </Col>
         </Navbar>
         <NavigationPanel show={props.loggedIn}/>
