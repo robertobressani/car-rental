@@ -1,6 +1,7 @@
 import React from 'react';
 import API from './api/API.js';
 import Header from './components/Header.js';
+import {Container} from 'react-bootstrap';
 import './App.css';
 
 class App extends React.Component{
@@ -19,9 +20,9 @@ class App extends React.Component{
     }
 
     render(){
-        return <>
+        return <Container>
             <Header loggedIn={this.state.loggedIn}/>
-        </>;
+        </Container>;
     }
 }
 
