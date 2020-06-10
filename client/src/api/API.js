@@ -1,10 +1,16 @@
 
 
 async function checkAuthentication() {
-    //TODO
-    return new Promise(((resolve, reject) => resolve(true)));
+    //TODO implement
+    return new Promise(((resolve, reject) =>
+                    resolve("Roberto")
+                    // reject()
+    ));
 }
 
+async function logout(){
+    //TODO implement
+}
 
-const API={checkAuthentication}
+const API={checkAuthentication, logout}
 export default API;
