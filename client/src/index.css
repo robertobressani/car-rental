@@ -15,3 +15,7 @@ body {
   background-color: white;
   min-height: 100vh;
 }
+
+.jumbotron-space{
+  margin-top: 2vh;
+}
