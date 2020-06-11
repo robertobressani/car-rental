@@ -13,17 +13,16 @@ import './App.css';
 class App extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {loggedIn: false, userName: ""};
+        this.state = {loggedIn: false, verifiedLogin: false, userName: ""};
     }
 
     componentDidMount() {
         //at app load checks if the user is logged in
         API.checkAuthentication().then(
-            (username) => this.setState({loggedIn: true, userName: username})
+            (username) => this.setState({loggedIn: true, verifiedLogin: true, userName: username})
         ).catch(
-            //nothing to do, not authenticated
-            () => {
-            }
+            //set the flag to indicate that authentication check has been performed
+            ()=>this.setState({verifiedLogin: true})
         )
     }
 
@@ -31,6 +30,7 @@ class App extends React.Component {
         const value={
             userName: this.state.userName,
             loggedIn: this.state.loggedIn,
+            verifiedLogin: this.state.verifiedLogin,
             logout: this.doLogout
         }
         return <Container>
