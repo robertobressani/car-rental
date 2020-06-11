@@ -29,9 +29,9 @@ class CarList extends React.Component {
         return <Jumbotron className="row jumbotron-space justify-content-between">
             <CarFilterBox name={"Select car category"} values={this.state.categories} loading={this.state.loading}
                           selected={this.state.selectedCategories} setter={this.setCategory}
-                          setAll={this.setAllCategories}/>
+                          setAll={this.setAllCategories} size={5}/>
             <CarFilterBox  name={"Select car brand"} values={this.state.brands} loading={this.state.loading}
-                          selected={this.state.selectedBrands} setter={this.setBrand} setAll={this.setAllBrands}/>
+                          selected={this.state.selectedBrands} setter={this.setBrand} setAll={this.setAllBrands} size={7}/>
         </Jumbotron>;
         //TODO add car table
     }
@@ -112,9 +112,10 @@ function CarFilterBox(props) {
         );
     else
         content = <ProgressBar animated now={100}/>;
-    return <Col md={6} xs={12}><h4>{props.name}
+    return <Col md={props.size} xs={12}><h4>{props.name}
     </h4><ButtonGroup className="mb-2">
-        {content}
+        {content/*TODO fix multiple buttons*/}
+
     </ButtonGroup>
         <Nav className={"small-nav"}>
             <Nav.Item>
