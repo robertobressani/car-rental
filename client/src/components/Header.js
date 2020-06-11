@@ -1,5 +1,5 @@
 import React, {useContext} from "react";
-import {Navbar, Nav, Col, Image, Button} from "react-bootstrap";
+import {Navbar, Nav, Col, Image, Button, Spinner} from "react-bootstrap";
 import {Switch, Route, Link, NavLink} from 'react-router-dom';
 import Logo from "./img/logo.svg"
 import AuthenticationContext from "./AuthenticationContext.js";
@@ -8,7 +8,18 @@ import AuthenticationContext from "./AuthenticationContext.js";
 function Header(props) {
     let button;
     const value = useContext(AuthenticationContext);
-    if (value.loggedIn)
+    if(!value.verifiedLogin)
+        button = <Button variant="secondary" disabled>
+            <Spinner
+                as="span"
+                animation="grow"
+                size="sm"
+                role="status"
+                aria-hidden="true"
+            />
+            Loading...
+        </Button>
+    else if (value.loggedIn)
         button = <Link to="/cars"><Button variant="danger" onClick={value.logout}>{"Logout"} </Button></Link>;
     else
         button = <Link to="/login"><Button variant="success">{"Login"} </Button></Link>;
@@ -43,13 +54,13 @@ function NavigationPanel(props) {
         //TODO change bg color
         return <Nav variant="tabs" >
             <Nav.Item>
-                <Nav.Link as={NavLink}  activeClassName="bg-white" className="bg-light" to="/cars">All cars  </Nav.Link>
+                <Nav.Link as={NavLink}  activeClassName="bg-white" className="bg-grey text-dark" to="/cars">All cars  </Nav.Link>
             </Nav.Item>
             <Nav.Item>
-                <Nav.Link as={NavLink}  activeClassName="bg-white" className="bg-light" to="/configurator">Rental configurator  </Nav.Link>
+                <Nav.Link as={NavLink}  activeClassName="bg-white" className="bg-grey text-dark" to="/configurator">Rental configurator  </Nav.Link>
             </Nav.Item>
             <Nav.Item>
-                <Nav.Link as={NavLink}  activeClassName="bg-white" className="bg-light" to="/rentals">List of all rentals </Nav.Link>
+                <Nav.Link as={NavLink}  activeClassName="bg-white" className="bg-grey text-dark" to="/rentals">List of all rentals </Nav.Link>
             </Nav.Item>
         </Nav>;
     //nothing to show if the user is not authenticated
