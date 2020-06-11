@@ -16,8 +16,12 @@ body {
   min-height: 100vh;
 }
 
-.jumbotron-space{
+.jumbotron-space {
   margin-top: 2vh;
+  margin-left: 1vw;
+  margin-right: 1vw;
+  padding-top: 2vh;
+  padding-bottom: 2vh;
 }
 
 .bg-grey{
@@ -26,4 +30,16 @@ body {
 
 .bg-grey:hover{
   background-color: lightsteelblue;
+}
+
+.small-nav{
+  font-size: small;
+}
+
+.small-nav > .nav-item:first-child > a {
+  padding-left: 0;
+}
+
+a.nav-link{
+  color:black
 }
