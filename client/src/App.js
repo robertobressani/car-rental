@@ -31,6 +31,7 @@ class App extends React.Component {
             userName: this.state.userName,
             loggedIn: this.state.loggedIn,
             verifiedLogin: this.state.verifiedLogin,
+            login: this.doLogin,
             logout: this.doLogout
         }
         return <Container>
@@ -63,6 +64,13 @@ class App extends React.Component {
     doLogout=()=>{
         this.setState({userName:"", loggedIn:false})
         API.logout();
+    }
+
+    doLogin=async (email, password)=>{
+        let res= await API.login(email, password);
+        if(res)
+            this.setState({loggedIn: true, userName: res});
+        return res;
     }
 }
 
