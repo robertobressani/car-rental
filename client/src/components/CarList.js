@@ -8,7 +8,7 @@ class CarList extends React.Component {
         this.state = {
             loading: true,
             categories: ["A", "B", "C", "D", "E"],
-            selectedCategories: ["B", "C"],
+            selectedCategories: [],
             brands: [],
             selectedBrands: [],
             cars: [],
