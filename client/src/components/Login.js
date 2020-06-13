@@ -50,7 +50,7 @@ class LoginForm extends React.Component {
                                   defaultValue={this.state.email} required/>
                 </Form.Group>
 
-                <Form.Group controlId="formBasicPassword">
+                <Form.Group >
                     <Form.Label>Password</Form.Label>
                     <Form.Control type="password" placeholder="Password"
                                   onChange={(event) => this.setState({password: event.target.value})}
