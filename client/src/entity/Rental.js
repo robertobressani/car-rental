@@ -1,7 +1,7 @@
 import moment from 'moment';
 import Car from './Car.js';
 
-class Rental{
+export default class Rental{
     constructor(start, end, kilometer, unlimited, age, extra_drivers, insurance, car ) {
         this.start=moment(start);
         this.end=moment(end);

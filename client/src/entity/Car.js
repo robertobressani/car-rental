@@ -1,4 +1,4 @@
-class Car{
+export default class Car{
     constructor(id, brand, category, model, price) {
         this.id= id;
         this.brand=brand;
