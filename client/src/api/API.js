@@ -1,4 +1,4 @@
-
+import Car from "../entity/Car";
 
 async function checkAuthentication() {
     //TODO implement
@@ -22,7 +22,7 @@ async function logout(){
 
 async function getCars(){
     //TODO implement
-    return [];
+    return [new Car(1,"Alfa", "A","Romeo", 100 ), new Car(2, "Fiat", "E", "500",500)];
 }
 
 async function getBrands(){
