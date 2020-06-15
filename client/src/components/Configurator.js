@@ -1,6 +1,8 @@
 import React from 'react';
 import {Redirect, Route, Link} from 'react-router-dom';
-import {Form, Jumbotron, ProgressBar, Row, Alert, Button, Modal} from 'react-bootstrap';
+import Cards from 'react-credit-cards';
+import 'react-credit-cards/es/styles-compiled.css';
+import {Form, Jumbotron, ProgressBar, Row, Alert, Button, Modal, Col} from 'react-bootstrap';
 import AuthenticationContext from './AuthenticationContext.js';
 
 import moment from 'moment';
@@ -9,7 +11,10 @@ import Configuration from '../entity/Configuration.js';
 class Configurator extends React.Component {
     constructor(props) {
         super(props);
-        this.state={submitted: false, loading:false, configuration: new Configuration(), price_num:{ price:-1, available:-1}}
+        this.state={submitted: false, loading:false,
+            configuration: new Configuration(), price_num:{ price:-1, available:-1},
+            creditCard:{cvv:"", focused:"", name:"", number:""}
+        }
     }
 
     /**
@@ -34,7 +39,7 @@ class Configurator extends React.Component {
         }
     }
 
-    updateValue(name, value) {
+    updateConfigurationValue(name, value) {
         this.setState((state) => {
             let configuration = Object.assign(new Configuration(), {...state.configuration});
             configuration[name] = value;
@@ -43,6 +48,28 @@ class Configurator extends React.Component {
         });
     }
 
+    updateCardValue(name, value){
+        this.setState((state) => {
+            let creditCard ={...state.creditCard};
+            creditCard[name] = value;
+            return {creditCard};
+        });
+    }
+
+    updateFocusCard (e) {
+        this.updateCardValue("focused", e.target.name );
+    }
+
+    checkPayment (e){
+        e.preventDefault();
+        if(e.target.checkValidity()){
+            console.log("form is valid");
+            //TODO add API call and state management
+        }
+    }
+
+
+
     render() {
         return <AuthenticationContext.Consumer >{(value) =>{
             if (!value.verifiedLogin)
@@ -50,13 +77,17 @@ class Configurator extends React.Component {
             if (!value.loggedIn)
                 return <Redirect to={"/login"}/>
             return <><Jumbotron className=" jumbotron-space">
-                <ConfiguratorForm  updateValue={(name, value)=>this.updateValue(name, value)} configuration={this.state.configuration}/>
+                <ConfiguratorForm updateValue={(name, value)=>this.updateConfigurationValue(name, value)}
+                                  configuration={this.state.configuration}/>
                 </Jumbotron>
                 {this.state.submitted ?
                     <AvailableCar loading={this.state.loading} price_num={this.state.price_num}/> : <></>
                 }
                 <Route exact path="/configurator/pay">
-                <PaymentDialog configuration={this.state.configuration}/>
+                <PaymentDialog card={this.state.creditCard} updateFocus={(e)=>this.updateFocusCard(e)}
+                               updateCredit={(name, value)=> this.updateCardValue(name, value)}
+                               price={this.state.price_num.price} validate={this.checkPayment}
+                               configuration={this.state.configuration /*needed to detect if the configuration is valid*/}/>
                 </Route>
             </>;
 
@@ -159,36 +190,52 @@ function AvailableCar(props){
 function PaymentDialog(props) {
     if(!props.configuration.isValid())
         return <Redirect to={"/configurator"}/>;
-    console.log("modal");
     return <Modal show={true}>
-        <Modal.Header closeButton >
+        <Modal.Header>
             <Modal.Title>Insert your payment data</Modal.Title>
-        </Modal.Header>
 
+        </Modal.Header>
+        <h6>Confirm the payment of {props.price} € </h6>
         <Modal.Body>
-            <PaymentForm/>
+            <PaymentForm card={props.card} update={props.updateCredit} focus={props.updateFocus} validate={props.validate}/>
         </Modal.Body>
 
-        <Modal.Footer>
-            <Button variant="secondary">Close</Button>
-            <Button variant="primary">Save changes</Button>
-        </Modal.Footer>
+
     </Modal>;
 }
 
 function PaymentForm(props){
-    return <Form>
+    return <>
+        <Cards
+            cvc={props.card.cvv}
+            expiry={"12/99"}
+            focused={props.card.focused}
+            name={props.card.name}
+            number={props.card.number}
+        /><Form onSubmit={props.validate}>
         <Form.Group>
             <Form.Label>Credit card owner (full name):</Form.Label>
-            <Form.Control type="text" placeholder="SURNAME Name"  required/>
+            <Form.Control type="text" placeholder="SURNAME Name" value={props.card.name} onFocus={props.focus} name="name"
+                          onChange={(e)=>props.update("name", e.target.value)} required/>
         </Form.Group>
         <Form.Group>
             <Form.Label> Card number</Form.Label>
-            <Form.Control type="text"  placeholder="Your card number"  required/>
-
-
+            <Form.Control type="tel"  placeholder="Your card number" minlength={"8"} maxlength={"19"}  pattern="[0-9]+" name= { "number" /*needed for focus of credit card library*/}
+                          onFocus={props.focus}   onChange={(e)=>props.update("number", e.target.value)} required/>
         </Form.Group>
-    </Form>;
+        <Form.Group>
+            <Form.Label> CVV</Form.Label>
+            <Form.Control type="tel"  placeholder="CVV" minlength={"3"} maxlength={"3"} pattern="[0-9]+" onFocus={props.focus} name="cvc"
+                          onChange={(e)=>props.update("cvv", e.target.value)} required/>
+        </Form.Group>
+        <Form.Group className="row justify-content-end">
+            <Link to="/configurator" className="col-5 col-xl-3 pull-right ">
+                <Button variant="secondary" >Close</Button>
+            </Link>
+            <Button type="submit" variant="success" className="col-5 col-xl-3 pull-right">Confirm</Button>
+            <Col xs={1}/>{/*introduces spaces between buttons*/}
+        </Form.Group>
+    </Form></>;
 }
 
 export default Configurator;
