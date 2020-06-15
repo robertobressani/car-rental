@@ -1,4 +1,5 @@
 import Car from "../entity/Car";
+import Rental from "../entity/Rental";
 
 async function checkAuthentication() {
     //TODO implement
@@ -30,7 +31,15 @@ async function getBrands(){
     return ["Alfa", "Fiat"];
 }
 
+async function getRentals(future){
+    //TODO implement
+    return [new Rental(1, null, null, 200, false, 18, 5, true,
+        new Car(1,"Alfa", "A","Romeo", 100 ) ),
+        new Rental(2, "", "", 200, false, 18, 5, true,
+            new Car(1,"Alfa", "A","Romeo", 100 ) )];
+}
 
 
-const API={checkAuthentication, logout, login, getCars, getBrands}
+
+const API={checkAuthentication, logout, login, getCars, getBrands, getRentals}
 export default API;
