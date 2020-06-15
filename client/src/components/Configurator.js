@@ -180,19 +180,13 @@ function PaymentForm(props){
     return <Form>
         <Form.Group>
             <Form.Label>Credit card owner (full name):</Form.Label>
-            <Form.Control type="text" required/>
+            <Form.Control type="text" placeholder="SURNAME Name"  required/>
         </Form.Group>
         <Form.Group>
             <Form.Label> Card number</Form.Label>
-            <Form.Control type="text"  placeholder="Your card number"  required>
-                    <div className="input-group-append">
-                    <span className="input-group-text text-muted">
-                                                <i className="fa fa-cc-visa mx-1"></i>
-                                                <i className="fa fa-cc-amex mx-1"></i>
-                                                <i className="fa fa-cc-mastercard mx-1"></i>
-                                            </span>
-                    </div>
-            </Form.Control>
+            <Form.Control type="text"  placeholder="Your card number"  required/>
+
+
         </Form.Group>
     </Form>;
 }
