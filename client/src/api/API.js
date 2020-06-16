@@ -35,11 +35,21 @@ async function getRentals(future){
     //TODO implement
     return [new Rental(1, null, null, 200, false, 18, 5, true,
         new Car(1,"Alfa", "A","Romeo", 100 ) ),
-        new Rental(2, "", "", 200, false, 18, 5, true,
+        new Rental(2, "", "", 200, true, 18, 5, true,
             new Car(1,"Alfa", "A","Romeo", 100 ) )];
 }
 
+async function deleteRental(x) {
+    console.log("I'm deleting "+x);
+    return new Promise(((resolve, reject) =>
+            setTimeout(()=>
+                    resolve("Roberto")
+                    // reject()
+                , 2000)
+    ));
+    //TODO implement
+}
 
 
-const API={checkAuthentication, logout, login, getCars, getBrands, getRentals}
+const API={checkAuthentication, logout, login, getCars, getBrands, getRentals, deleteRental}
 export default API;
