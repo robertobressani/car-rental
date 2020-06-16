@@ -161,7 +161,7 @@ class CarTable extends  React.Component{
             </thead>
             <tbody>
             {this.state.cars.filter(x=>new Set(this.props.brands).has(x.brand) && new Set(this.props.categories).has(x.category)).map(x=>{
-                return <tr><td>{x.id}</td> <td>{x.model}</td><td>{x.brand}</td><td>{x.category}</td><td>{x.price+ " €"}</td></tr>;
+                return <tr key={x.id}><td>{x.id}</td><td>{x.model}</td><td>{x.brand}</td><td>{x.category}</td><td>{x.price+ " €"}</td></tr>;
             })}
             </tbody>
         </Table>
