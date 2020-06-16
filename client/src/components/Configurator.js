@@ -1,8 +1,8 @@
 import React from 'react';
-import {Redirect, Route, Link} from 'react-router-dom';
+import {Link, Redirect, Route} from 'react-router-dom';
 import Cards from 'react-credit-cards';
 import 'react-credit-cards/es/styles-compiled.css';
-import {Form, Jumbotron, ProgressBar, Row, Alert, Button, Modal, Col} from 'react-bootstrap';
+import {Alert, Button, Col, Form, Jumbotron, Modal, ProgressBar} from 'react-bootstrap';
 import AuthenticationContext from './AuthenticationContext.js';
 
 import moment from 'moment';
@@ -11,9 +11,10 @@ import Configuration from '../entity/Configuration.js';
 class Configurator extends React.Component {
     constructor(props) {
         super(props);
-        this.state={submitted: false, loading:false,
-            configuration: new Configuration(), price_num:{ price:-1, available:-1},
-            creditCard:{cvv:"", focused:"", name:"", number:""}
+        this.state = {
+            submitted: false, loading: false,
+            configuration: new Configuration(), price_num: {price: -1, available: -1},
+            creditCard: {cvv: "", focused: "", name: "", number: ""}
         }
     }
 
@@ -26,72 +27,77 @@ class Configurator extends React.Component {
             console.log("that's the right time to update");
 
             //TODO loading must be set to true (debug to false)
-            this.setState({submitted: true, loading:false});
+            this.setState({submitted: true, loading: false});
             let configuration = Object.assign(new Configuration(), {...this.state.configuration});
             if (configuration.unlimited)
                 //make no sense have kilometers per day set to a number
-                configuration.kilometer=0;
+                configuration.kilometer = 0;
             //TODO add API call then
             //TODO add validation messages
             //TODO remove this call (debug)
-            this.setState({price_num:{price: 1000, available: 2}})
+            this.setState({price_num: {price: 1000, available: 2}})
             //tthis.setState({ loading:false});
         }
     }
 
     updateConfigurationValue(name, value) {
+        console.log("called with:" + value);
         this.setState((state) => {
             let configuration = Object.assign(new Configuration(), {...state.configuration});
-            configuration[name] = value;
+
+            configuration[name]=value;
+            if (name === "kilometer")
+                configuration.unlimited = +value === 150;
+            else if(name==="unlimited" && !value)
+                configuration.kilometer=149;
             //setting submitted= false, so that a new load can be performed if valid
-            return {configuration: configuration, submitted:false};
+            return {configuration: configuration, submitted: false};
         });
     }
 
-    updateCardValue(name, value){
+    updateCardValue(name, value) {
         this.setState((state) => {
-            let creditCard ={...state.creditCard};
+            let creditCard = {...state.creditCard};
             creditCard[name] = value;
             return {creditCard};
         });
     }
 
-    updateFocusCard (e) {
-        this.updateCardValue("focused", e.target.name );
+    updateFocusCard(e) {
+        this.updateCardValue("focused", e.target.name);
     }
 
-    checkPayment (e){
+    checkPayment(e) {
         e.preventDefault();
-        if(e.target.checkValidity()){
+        if (e.target.checkValidity()) {
             console.log("form is valid");
             //TODO add API call and state management
         }
     }
 
 
-
     render() {
-        return <AuthenticationContext.Consumer >{(value) =>{
+        return <AuthenticationContext.Consumer>{(value) => {
             if (!value.verifiedLogin)
                 return <Jumbotron className="jumbotron-space"><ProgressBar animated now={100}/></Jumbotron>;
             if (!value.loggedIn)
                 return <Redirect to={"/login"}/>
             return <><Jumbotron className=" jumbotron-space">
-                <ConfiguratorForm updateValue={(name, value)=>this.updateConfigurationValue(name, value)}
+                <ConfiguratorForm updateValue={(name, value) => this.updateConfigurationValue(name, value)}
                                   configuration={this.state.configuration}/>
-                </Jumbotron>
+            </Jumbotron>
                 {this.state.submitted ?
                     <AvailableCar loading={this.state.loading} price_num={this.state.price_num}/> : <></>
                 }
                 <Route exact path="/configurator/pay">
-                <PaymentDialog card={this.state.creditCard} updateFocus={(e)=>this.updateFocusCard(e)}
-                               updateCredit={(name, value)=> this.updateCardValue(name, value)}
-                               price={this.state.price_num.price} validate={this.checkPayment}
-                               configuration={this.state.configuration /*needed to detect if the configuration is valid*/}/>
+                    <PaymentDialog card={this.state.creditCard} updateFocus={(e) => this.updateFocusCard(e)}
+                                   updateCredit={(name, value) => this.updateCardValue(name, value)}
+                                   price={this.state.price_num.price} validate={this.checkPayment}
+                                   configuration={this.state.configuration /*needed to detect if the configuration is valid*/}/>
                 </Route>
             </>;
 
-            }
+        }
 
         }</AuthenticationContext.Consumer>;
 
@@ -99,112 +105,111 @@ class Configurator extends React.Component {
     }
 }
 
-function ConfiguratorForm(props){
-        return <Form className="row ">
-            <Form.Group className="col-12 col-md-4">
-                <Form.Label>Start date of rental:</Form.Label>
-                <Form.Control type="date" defaultValue={props.configuration.start ?
-                                    props.configuration.start.format("yyyy-MM-DD"): ""}
-                              onChange={(event) => props.updateValue("start", moment(event.target.value))}/>
-            </Form.Group>
-            <Form.Group className="col-12 col-md-4">
-                <Form.Label>End date of rental:</Form.Label>
-                <Form.Control type="date" defaultValue={props.configuration.end ?
-                                    props.configuration.end.format("yyyy-MM-DD"): ""}
-                              onChange={(event) => props.updateValue("end", moment(event.target.value))}/>
-            </Form.Group>
-            <Form.Group className="col-12 col-md-4">
-                <Form.Label> Category: </Form.Label>
-                <Form.Control as="select" defaultValue={props.configuration.category}
-                              onChange={(event) => props.updateValue("category", event.target.value)}>
-                    <option/>
-                    <option>A</option>
-                    <option>B</option>
-                    <option>C</option>
-                    <option>D</option>
-                    <option>E</option>
-                    <option>F</option>
-                </Form.Control>
-            </Form.Group>
-            <Form.Group className="col-6 col-md-2">
-                <Form.Label>Age of driver: </Form.Label>
-                <Form.Control type="number" defaultValue={props.configuration.age}
-                              onChange={(event) => props.updateValue("age", event.target.value)}
-                              min={18}/>
-            </Form.Group>
-            <Form.Group className="col-6 col-md-2">
-                <Form.Label> Extra drivers: </Form.Label>
-                <Form.Control type="number" defaultValue={props.configuration.extra_drivers}
-                              onChange={(event) => props.updateValue("extra_drivers", event.target.value)}/>
-            </Form.Group>
-            <Form.Group className="col-12 col-md-4">
-                <Row className="justify-content-around">
-                    <Form.Label>Kilometers per day : {props.configuration.unlimited ?
-                        "limitless" : props.configuration.kilometer}</Form.Label>
-                    <Form.Check className="col-4" label="Unlimited" defaultChecked={props.configuration.unlimited}
-                                onChange={(event) => props.updateValue("unlimited", event.target.checked)}/>
-                </Row>
-                <Form.Control type="range" min={0} max={1000} value={props.configuration.kilometer}
-                              onChange={(event) => props.updateValue("kilometer", event.target.value)}
-                              disabled={props.configuration.unlimited}/>
-            </Form.Group>
-            <Form.Group className="col-12 col-md-3">
-                <Form.Check defaultChecked={props.configuration.insurance}
-                            onChange={(event) => props.updateValue("insurance", event.target.checked)}
-                            label="Extra insurance"/>
-            </Form.Group>
-        </Form>
+function ConfiguratorForm(props) {
+    return <Form className="row ">
+        <Form.Group className="col-12 col-md-4">
+            <Form.Label>Start date of rental:</Form.Label>
+            <Form.Control type="date" value={props.configuration.start ?
+                props.configuration.start.format("yyyy-MM-DD") : ""}
+                          onChange={(event) => props.updateValue("start", moment(event.target.value))}/>
+        </Form.Group>
+        <Form.Group className="col-12 col-md-4">
+            <Form.Label>End date of rental:</Form.Label>
+            <Form.Control type="date" value={props.configuration.end ?
+                props.configuration.end.format("yyyy-MM-DD") : ""}
+                          onChange={(event) => props.updateValue("end", moment(event.target.value))}/>
+        </Form.Group>
+        <Form.Group className="col-12 col-md-4">
+            <Form.Label> Category: </Form.Label>
+            <Form.Control as="select" dvalue={props.configuration.category}
+                          onChange={(event) => props.updateValue("category", event.target.value)}>
+                <option/>
+                <option>A</option>
+                <option>B</option>
+                <option>C</option>
+                <option>D</option>
+                <option>E</option>
+                <option>F</option>
+            </Form.Control>
+        </Form.Group>
+        <Form.Group className="col-6 col-md-2">
+            <Form.Label>Age of driver: </Form.Label>
+            <Form.Control type="number" value={props.configuration.age}
+                          onChange={(event) => props.updateValue("age", +event.target.value)}
+                          min={18}/>
+        </Form.Group>
+        <Form.Group className="col-6 col-md-2">
+            <Form.Label> Extra drivers: </Form.Label>
+            <Form.Control type="number" value={props.configuration.extra_drivers}
+                          onChange={(event) => props.updateValue("extra_drivers", +event.target.value)}/>
+        </Form.Group>
+        <Form.Group className="col-12 col-md-4">
+            <Form.Label>Kilometers per day : {props.configuration.unlimited ?
+                "unlimited" : props.configuration.kilometer}</Form.Label>
+            <Form.Control type="range" min={0} max={150} value={props.configuration.kilometer}
+                          onChange={(event) => props.updateValue("kilometer", event.target.value)}
+                          disabled={props.configuration.unlimited}/>
+            <Form.Check label="Unlimited" checked={props.configuration.unlimited}
+                        onChange={(event) => props.updateValue("unlimited", event.target.checked)}/>
+        </Form.Group>
+        <Form.Group className="col-12 col-md-3">
+            <Form.Check checked={props.configuration.insurance}
+                        onChange={(event) => props.updateValue("insurance", event.target.checked)}
+                        label="Extra insurance"/>
+        </Form.Group>
+    </Form>
 }
 
-function AvailableCar(props){
-    if(props.loading)
+function AvailableCar(props) {
+    if (props.loading)
         return <ProgressBar animated now={100}/>
-    else if(props.price_num.available> 0)
+    else if (props.price_num.available > 0)
         return <Alert variant="success">
             <Alert.Heading>We've found a car for you!</Alert.Heading>
             <p>
-                There are {props.price_num.available} car{props.price_num.available>1 ? "s" :""} that satisf
-                {props.price_num.available>1 ? "y" :"ies"} your search available at {props.price_num.price} €
+                There are {props.price_num.available} car{props.price_num.available > 1 ? "s" : ""} that satisf
+                {props.price_num.available > 1 ? "y" : "ies"} your search available at {props.price_num.price} €
             </p>
-            <hr />
+            <hr/>
             <div className="d-flex justify-content-end">
                 <Link to="/configurator/pay"><Button variant="outline-success">
                     Proceed to payment
                 </Button></Link>
             </div>
         </Alert>;
-    else return  <Alert variant="danger">
-        <Alert.Heading>There are no cars for you!</Alert.Heading>
-        <p>
-            We are sorry, we cannot rent any car according to the search you have perfomed.
-        </p>
-        <hr />
-        <div className="d-flex justify-content-end">
-            <Button variant="outline-danger">
-                Notify me when a car is available
-            </Button>
-        </div>
-    </Alert>;
+    else return <Alert variant="danger">
+            <Alert.Heading>There are no cars for you!</Alert.Heading>
+            <p>
+                We are sorry, we cannot rent any car according to the search you have perfomed.
+            </p>
+            <hr/>
+            <div className="d-flex justify-content-end">
+                <Button variant="outline-danger">
+                    Notify me when a car is available
+                </Button>
+            </div>
+        </Alert>;
 }
 
 function PaymentDialog(props) {
-    if(!props.configuration.isValid())
+    if (!props.configuration.isValid())
         return <Redirect to={"/configurator"}/>;
     return <Modal show={true}>
         <Modal.Header>
-            <Modal.Title>Insert your payment data</Modal.Title>
+            <Modal.Title>Insert your payment data <h6>Confirm the payment of {props.price} € </h6></Modal.Title>
 
         </Modal.Header>
-        <h6>Confirm the payment of {props.price} € </h6>
+
         <Modal.Body>
-            <PaymentForm card={props.card} update={props.updateCredit} focus={props.updateFocus} validate={props.validate}/>
+            <PaymentForm card={props.card} update={props.updateCredit} focus={props.updateFocus}
+                         validate={props.validate}/>
         </Modal.Body>
 
 
     </Modal>;
 }
 
-function PaymentForm(props){
+function PaymentForm(props) {
     return <>
         <Cards
             cvc={props.card.cvv}
@@ -215,22 +220,25 @@ function PaymentForm(props){
         /><Form onSubmit={props.validate}>
         <Form.Group>
             <Form.Label>Credit card owner (full name):</Form.Label>
-            <Form.Control type="text" placeholder="SURNAME Name" value={props.card.name} onFocus={props.focus} name="name"
-                          onChange={(e)=>props.update("name", e.target.value)} required/>
+            <Form.Control type="text" placeholder="SURNAME Name" value={props.card.name} onFocus={props.focus}
+                          name="name"
+                          onChange={(e) => props.update("name", e.target.value)} required/>
         </Form.Group>
         <Form.Group>
             <Form.Label> Card number</Form.Label>
-            <Form.Control type="tel"  placeholder="Your card number" minlength={"8"} maxlength={"19"}  pattern="[0-9]+" name= { "number" /*needed for focus of credit card library*/}
-                          onFocus={props.focus}   onChange={(e)=>props.update("number", e.target.value)} required/>
+            <Form.Control type="tel" placeholder="Your card number" minlength={"8"} maxlength={"19"} pattern="[0-9]+"
+                          name={"number" /*needed for focus of credit card library*/}
+                          onFocus={props.focus} onChange={(e) => props.update("number", e.target.value)} required/>
         </Form.Group>
         <Form.Group>
             <Form.Label> CVV</Form.Label>
-            <Form.Control type="tel"  placeholder="CVV" minlength={"3"} maxlength={"3"} pattern="[0-9]+" onFocus={props.focus} name="cvc"
-                          onChange={(e)=>props.update("cvv", e.target.value)} required/>
+            <Form.Control type="tel" placeholder="CVV" minlength={"3"} maxlength={"3"} pattern="[0-9]+"
+                          onFocus={props.focus} name="cvc"
+                          onChange={(e) => props.update("cvv", e.target.value)} required/>
         </Form.Group>
         <Form.Group className="row justify-content-end">
             <Link to="/configurator" className="col-5 col-xl-3 pull-right ">
-                <Button variant="secondary" >Close</Button>
+                <Button variant="secondary">Close</Button>
             </Link>
             <Button type="submit" variant="success" className="col-5 col-xl-3 pull-right">Confirm</Button>
             <Col xs={1}/>{/*introduces spaces between buttons*/}
