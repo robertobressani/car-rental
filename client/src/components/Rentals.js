@@ -1,10 +1,11 @@
 import React, {useContext, useEffect, useState} from 'react';
 import AuthenticationContext from "./AuthenticationContext.js";
 import {Redirect} from "react-router-dom";
-import {Jumbotron, ProgressBar, Table} from "react-bootstrap";
+import {Jumbotron, ProgressBar, Table, Alert, Button} from "react-bootstrap";
 import API from '../api/API.js';
 import DeleteIco from './img/eraser.svg';
 import YesLogo from './img/tick.svg';
+import Spinner from "react-bootstrap/Spinner";
 
 
 function Rentals() {
@@ -13,6 +14,17 @@ function Rentals() {
 	const [loadPast, setLoadPast] = useState(false);
 	const [pastRentals, setPast] = useState([]);
 	const [futureRentals, setFuture] = useState([]);
+	const [loading, setLoading] = useState([]);
+	const [error, setError] = useState(false);
+
+	function deleteR(x) {
+		setLoading([...loading, x]);
+		API.deleteRental(x).then(()=>{
+			setFuture([...futureRentals].filter(rental=>rental.id!==x));
+		}).catch(()=>setError(`Impossible to delete car rental number ${x}`))
+			.finally(()=>setLoading([...loading].filter(load=>load!==x)));
+	}
+
 	useEffect(() => {
 		API.getRentals(true).then(x => {
 			setFuture(x);
@@ -27,9 +39,16 @@ function Rentals() {
 		return <Jumbotron className="jumbotron-space"><ProgressBar animated now={100}/></Jumbotron>;
 	if (!value.loggedIn)
 		return <Redirect to={"/login"}/>;
-	return <><RentalTable name="Your future rentals" future={true} rentals={futureRentals}/>
+	return <>
+		<Alert show={!!error} variant="danger" className="jumbotron-space" dismissible onClose={() => setError(false)}>
+			<Alert.Heading>An error occurred</Alert.Heading>
+			<p>{error}</p>
+		</Alert>
+		<RentalTable name="Your future rentals" future={true} delete={x=>deleteR(x)} rentals={futureRentals} loading={loading}/>
 		<RentalTable name="Your past rentals" rentals={pastRentals}/></>;
 }
+
+
 
 function RentalTable(props) {
 	return <> <Jumbotron className="jumbotron-space"><h4>{props.name}</h4></Jumbotron>
@@ -57,12 +76,15 @@ function RentalTable(props) {
 					<td>{x.car.category}</td>
 					<td className="d-none d-lg-table-cell">{x.age}</td>
 					<td className="d-none d-lg-table-cell">{x.extra_drivers}</td>
-					<td className="d-none d-sm-table-cell">{x.kilometer}</td>
-					<td className="d-none d-lg-table-cell">{x.insurance ? <img alt="insurance-present" height={20} src={YesLogo}/>: null }</td>
+					<td className="d-none d-sm-table-cell">{x.unlimited? "Unlimited" : x.kilometer}</td>
+					<td className="d-none d-lg-table-cell">{x.insurance ?
+						<img alt="insurance-present" height={20} src={YesLogo}/>: null }</td>
 					<td>{x.car.price}</td>
 					<td className="d-none d-sm-table-cell">{x.car.brand}</td>
 					<td className="d-none d-sm-table-cell">{x.car.model}</td>
-					{props.future ? <td><img alt="delete" height={20} src={DeleteIco}/></td> : null}
+					{props.future ? new Set([...props.loading]).has(x.id) ?
+						<td><Spinner animation="border" size="sm" /></td> :<td><img alt="delete" height={20} src={DeleteIco}
+																		   onClick={()=>props.delete(x.id)}/></td> : null}
 				</tr>
 			})}
 			</tbody>
