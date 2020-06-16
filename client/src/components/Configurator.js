@@ -22,7 +22,7 @@ class Configurator extends React.Component {
      * form has changed: must load the price and availability
      */
     componentDidUpdate() {
-        //loading of new data must be perfomed only when a sumbission hasn't been already done
+        //loading of new data must be performed only when a submission hasn't been already done
         if (!this.state.submitted && this.state.configuration.isValid()) {
             console.log("that's the right time to update");
 
@@ -129,7 +129,6 @@ function ConfiguratorForm(props) {
                 <option>C</option>
                 <option>D</option>
                 <option>E</option>
-                <option>F</option>
             </Form.Control>
         </Form.Group>
         <Form.Group className="col-6 col-md-2">
