@@ -149,19 +149,19 @@ class CarTable extends  React.Component{
     render(){
         if(this.state.loading)
             return <ProgressBar animated now={100}/>;
-        return <Table striped bordered hover>
+        return <Table striped bordered hover responsive>
             <thead>
             <tr>
                 <th>#</th>
-                <th>Model</th>
                 <th>Brand</th>
+                <th>Model</th>
                 <th>Category</th>
                 <th>Minimum daily price</th>
             </tr>
             </thead>
             <tbody>
             {this.state.cars.filter(x=>new Set(this.props.brands).has(x.brand) && new Set(this.props.categories).has(x.category)).map(x=>{
-                return <tr key={x.id}><td>{x.id}</td><td>{x.model}</td><td>{x.brand}</td><td>{x.category}</td><td>{x.price+ " €"}</td></tr>;
+                return <tr key={x.id}><td>{x.id}</td><td>{x.brand}</td><td>{x.model}</td><td>{x.category}</td><td>{x.price+ " €"}</td></tr>;
             })}
             </tbody>
         </Table>
