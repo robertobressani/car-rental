@@ -15,6 +15,9 @@
 
 All the REST APIs will begin with `/api/`
 
+
+### "Public" APIs (accessible without authentication token)
+
 - GET `/cars` 
   - no request body and params
   - response with the full car set
@@ -24,6 +27,13 @@ All the REST APIs will begin with `/api/`
 - POST `/login`
   - request body with username and password
   - empty response (status code is meaningful), if successful will set the cookie
+
+### "Private" APIs (accessible only with authentication token)
+
+
+### TO BE implemented yet
+
+
 - GET `/config` [requires authentication] <!--TODO see which info give -->
   - request body contains the parameters of the searched configuration 
   - response body contains the available cars
@@ -49,6 +59,8 @@ All the REST APIs will begin with `/api/`
 
 ## Main React Components
 
+
+<!--TODO add components -->
 - `ListOfSomething` (in `List.js`): component purpose and main functionality
 - `GreatButton` (in `GreatButton.js`): component purpose and main functionality
 - ...
@@ -57,12 +69,12 @@ All the REST APIs will begin with `/api/`
 
 ## Screenshot
 
-<!--TODO addd screen shot -->
+<!--TODO add screen shot -->
 ![Configurator Screenshot](./img/screenshot.jpg)
 
 ## Test users
 
-* username, password
+* sample@gmail.com, "password"
 * username, password
 * username, password (frequent customer)
 * username, password
