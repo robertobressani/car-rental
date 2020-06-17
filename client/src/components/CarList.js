@@ -19,6 +19,7 @@ class CarList extends React.Component {
      * when mounted, loads cars and brands from server
      */
     componentDidMount() {
+        //TODO error handling
         Promise.all([API.getCars(), API.getBrands()]).then(results =>
             this.setState({cars: results[0], brands: results[1], selectedBrands: results[1],  loading: false})
         ).catch(error => this.setState({error: error}));
@@ -161,7 +162,12 @@ class CarTable extends  React.Component{
             </thead>
             <tbody>
             {this.state.cars.filter(x=>new Set(this.props.brands).has(x.brand) && new Set(this.props.categories).has(x.category)).map(x=>{
-                return <tr key={x.id}><td>{x.id}</td><td>{x.brand}</td><td>{x.model}</td><td>{x.category}</td><td>{x.price+ " €"}</td></tr>;
+                return <tr key={x.id}>
+                    <td>{x.id}</td>
+                    <td>{x.brand}</td>
+                    <td>{x.model}</td>
+                    <td>{x.category}</td>
+                    <td>{x.price.toFixed(2)+ " €"}</td></tr>;
             })}
             </tbody>
         </Table>
