@@ -17,6 +17,8 @@
   },
   "devDependencies": {
     "bcrypt": "^5.0.0",
+    "cookie-parser": "^1.4.5",
+    "express-jwt": "^5.3.3",
     "jsonwebtoken": "^8.5.1"
   }
 }
