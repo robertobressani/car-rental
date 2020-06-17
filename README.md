@@ -19,14 +19,17 @@ All the REST APIs will begin with `/api/`
 ### "Public" APIs (accessible without authentication token)
 
 - GET `/cars` 
-  - no request body and params
+  - no request body and parameters
   - response with the full car set
 - GET `/brands`
-  - no request body and params
+  - no request body and parameters
   - response with all brands
 - POST `/login`
   - request body with username and password
   - if successful will set the cookie and return the username
+- GET `/login`
+  - no request body and parameters
+  - if user is already  logged in, it will return the username
 
 ### "Private" APIs (accessible only with authentication token)
 
