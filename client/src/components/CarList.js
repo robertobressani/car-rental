@@ -10,8 +10,7 @@ class CarList extends React.Component {
             categories: ["A", "B", "C", "D", "E"],
             selectedCategories: ["A", "B", "C", "D", "E"],
             brands: [],
-            selectedBrands: [],
-            cars: [],
+            selectedBrands: []
         };
     }
 
@@ -20,8 +19,8 @@ class CarList extends React.Component {
      */
     componentDidMount() {
         //TODO error handling
-        Promise.all([API.getCars(), API.getBrands()]).then(results =>
-            this.setState({cars: results[0], brands: results[1], selectedBrands: results[1],  loading: false})
+       API.getBrands().then(result =>
+            this.setState({ brands: result, selectedBrands: result,  loading: false})
         ).catch(error => this.setState({error: error}));
 
     }
