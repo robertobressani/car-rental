@@ -66,11 +66,8 @@ class App extends React.Component {
         API.logout();
     }
 
-    doLogin=async (email, password)=>{
-        let res= await API.login(email, password);
-        if(res)
-            this.setState({loggedIn: true, userName: res});
-        return res;
+    doLogin= (email, password)=>{
+        return API.login(email, password).then(user=>this.setState({loggedIn: true, userName: user}));
     }
 }
 

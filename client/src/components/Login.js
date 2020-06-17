@@ -38,9 +38,9 @@ class LoginForm extends React.Component {
                     if(event.target.checkValidity()){
                         console.log("Submitting");
                         this.setState({submitted:true});
-
-                        if(! await this.props.login(this.state.email, this.state.password))
-                            this.setState({submitted:false, error:true});
+                        this.props.login(this.state.email, this.state.password)
+                            .catch(err=>this.setState({submitted:false, error:err}));
+                        //if everything fine login flag will be set and it will be redirect to /configurator
                     }
                 }}>
                 <Form.Group>
@@ -60,7 +60,7 @@ class LoginForm extends React.Component {
                     this.state.error ?
                         <Form.Group>
                             <Alert variant="danger">
-                                Your credentials are wrong!
+                                {this.state.error}
                             </Alert>
                         </Form.Group> : ""
                 }
