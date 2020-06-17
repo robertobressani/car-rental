@@ -56,6 +56,7 @@ app.post(BASE_URL+"login", (req, res)=>{
    //TODO
     const email = req.body.email;
     const password = req.body.password;
+    //TODO add cookie
     userDao.checkEmailPassword(email, password)
         .then(user=>res.json(user)).catch((err)=>{
             if(err)
@@ -64,7 +65,7 @@ app.post(BASE_URL+"login", (req, res)=>{
             else
                 //Wrong email or password
                 //(for security reason the error code doesn't specify whether email or password is wrong)
-                res.status(402).end();
+                res.status(401).end();
         });
 });
 
