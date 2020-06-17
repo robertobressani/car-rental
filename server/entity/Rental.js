@@ -1,7 +1,7 @@
 const moment=require('moment');
 const Car= require('./Car.js');
 
-modules.exports= class Rental{
+module.exports= class Rental{
     constructor(id,start, end, kilometer, unlimited, age, extra_drivers, insurance, car ) {
         this.id=id;
         this.start=moment(start);

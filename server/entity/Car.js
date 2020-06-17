@@ -1,4 +1,4 @@
-modules.exports=class Car{
+module.exports=class Car{
     constructor(id, brand, category, model, price) {
         this.id= id;
         this.brand=brand;

@@ -3,7 +3,7 @@ const morgan = require('morgan');
 
 const serverConf =require('./config/server_conf');
 
-const PORT = serverConf.Port;
+const PORT = serverConf.port;
 
 app = new express();
 app.use(morgan('tiny'));
