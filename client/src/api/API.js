@@ -23,14 +23,10 @@ async function getBrands(){
 }
 
 async function checkAuthentication() {
-    //TODO implement
-    return new Promise(((resolve, reject) =>
-                     setTimeout(()=>
-                    // resolve("Roberto")
-
-                    reject()
-                         , 1000)
-    ));
+    const response =  await fetch(`${BASE_URL}login`);
+    if(response.ok && response.status === 200)
+        return await response.json();
+    throw {};
 }
 async function login(email, password){
     //TODO implement
@@ -41,10 +37,8 @@ async function login(email, password){
         },
         body: JSON.stringify({email: email, password: password}),
     });
-    if(response.ok){
-        const username= await response.json();
-        return username;
-    }
+    if(response.ok)
+        return await response.json();
     switch (response.status) {
         case 401:
             throw "Wrong username or password";
