@@ -1,12 +1,15 @@
 const express = require('express');
 const morgan = require('morgan');
-const carDao= require('./dao/car_dao')
+const carDao= require('./dao/car_dao');
+const jsonwebtoken = require('jsonwebtoken');
 
 const serverConf =require('./config/server_conf');
 const userDao = require("./dao/user_dao");
 
+const expireTime = serverConf.expireSec; //seconds
 const PORT = serverConf.port;
 const BASE_URL = serverConf.baseURL;
+const jwtSecret = serverConf.secret;
 
 
 app = new express();
@@ -58,7 +61,9 @@ app.post(BASE_URL+"login", (req, res)=>{
 
     userDao.checkEmailPassword(email, password)
         .then(user=> {
-            //TODO add cookie
+            //AUTHENTICATION SUCCESS
+            const token = jsonwebtoken.sign({ user: user.id }, jwtSecret, {expiresIn: expireTime});
+            res.cookie('token', token, { httpOnly: true, sameSite: true, maxAge: 1000*expireTime });
             res.json(user.user)
         }).catch((err)=>{
             if(err)
