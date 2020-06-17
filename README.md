@@ -26,7 +26,7 @@ All the REST APIs will begin with `/api/`
   - response with all brands
 - POST `/login`
   - request body with username and password
-  - empty response (status code is meaningful), if successful will set the cookie
+  - if successful will set the cookie and return the username
 
 ### "Private" APIs (accessible only with authentication token)
 
