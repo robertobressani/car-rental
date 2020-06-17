@@ -4,7 +4,7 @@ module.exports={
         /**
          * Discounts for kilometers
          */
-        ["low_km", 0.95],["medium_km", 0], ["high_km", 1.05],
+        ["low_km", 0.95],["medium_km", 1], ["high_km", 1.05],
         /**
          *discounts for age
          */
@@ -12,11 +12,12 @@ module.exports={
         /**
          * extras
          */
-        ["extra_drivers", 1.15], ["extra_insurance", 1.20], ["frequent_customer", 0.90], ["number_frequent_rentals", 3],
+        ["extra_drivers", 1.15], ["extra_insurance", 1.20], ["frequent_customer", 0.90],
         /**
          * critical value
          */
-        ["few_cars", 1.10], ["number_critical_cars", 0.1]
-
-    ])
+        ["few_cars", 1.10]
+    ]),
+    availability_threshold : 0.10,
+    min_frequent_rentals : 3
 };

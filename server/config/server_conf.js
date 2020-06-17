@@ -1,4 +1,6 @@
 module.exports= {
     port: 3001,
-    secret: "SOMETHING VERY SECRET"
+    baseURL: "/api/",
+    secret: "SOMETHING VERY SECRET",
+    DBsource: './db/car_rental.db'
 }
