@@ -1,7 +1,7 @@
 import React, {useContext, useEffect, useState} from 'react';
 import AuthenticationContext from "./AuthenticationContext.js";
 import {Redirect} from "react-router-dom";
-import {Jumbotron, ProgressBar, Table, Alert, Button} from "react-bootstrap";
+import {Jumbotron, ProgressBar, Table, Alert} from "react-bootstrap";
 import API from '../api/API.js';
 import DeleteIco from './img/eraser.svg';
 import YesLogo from './img/tick.svg';
