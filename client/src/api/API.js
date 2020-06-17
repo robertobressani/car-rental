@@ -34,9 +34,23 @@ async function checkAuthentication() {
 }
 async function login(email, password){
     //TODO implement
-    return password==="test" ? "pippo" : false;
-    //return true;
-}
+    const response =  await fetch(`${BASE_URL}login`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({email: email, password: password}),
+    });
+    if(response.ok){
+        const username= await response.json();
+        return username;
+    }
+    switch (response.status) {
+        case 401:
+            throw "Wrong username or password";
+        default:
+            throw "Something went wrong during the call";
+    }
 
 
 }
