@@ -6,7 +6,7 @@ const serverConf =require('./config/server_conf');
 const userDao = require("./dao/user_dao");
 
 const PORT = serverConf.port;
-const BASE_URL=serverConf.baseURL;
+const BASE_URL = serverConf.baseURL;
 
 
 app = new express();
@@ -53,12 +53,14 @@ app.get(BASE_URL+"brands",(req, res)=>{
  * @return the username
  */
 app.post(BASE_URL+"login", (req, res)=>{
-   //TODO
     const email = req.body.email;
     const password = req.body.password;
-    //TODO add cookie
+
     userDao.checkEmailPassword(email, password)
-        .then(user=>res.json(user)).catch((err)=>{
+        .then(user=> {
+            //TODO add cookie
+            res.json(user.user)
+        }).catch((err)=>{
             if(err)
                 //Something wrong in the call
                 res.status(500).end();

@@ -10,13 +10,14 @@ module.exports.checkEmailPassword=(email, password)=>{
             else if (!row)
                 reject(undefined);
             else{
-               resolve(checkPassword(password, row.password))
+                if(checkPassword(password, row.password))
+                    resolve({user: row.username, id: row.id});
+                else reject(undefined);
             }
         });
     });
 }
 
 function checkPassword(pw, hash){
-    console.log("checking "+pw);
     return bcrypt.compareSync(pw, hash);
 }
