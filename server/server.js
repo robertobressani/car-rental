@@ -2,6 +2,9 @@ const express = require('express');
 const morgan = require('morgan');
 const carDao= require('./dao/car_dao');
 const jsonwebtoken = require('jsonwebtoken');
+const jwt=require('express-jwt');
+const cookieParser = require('cookie-parser');
+
 
 const serverConf =require('./config/server_conf');
 const userDao = require("./dao/user_dao");
@@ -17,6 +20,7 @@ app.use(morgan('tiny'));
 
 // Process body content
 app.use(express.json());
+app.use(cookieParser());
 
 
 /**-----PUBLIC APIs---------*/
@@ -76,6 +80,22 @@ app.post(BASE_URL+"login", (req, res)=>{
         });
 });
 
+/**
+ * checks if a user has a validd cookie
+ * @param empty (only cookie is important)
+ * @return username if authenticated
+ */
+app.get(`${BASE_URL}login`, jwt({
+        secret: jwtSecret,
+        getToken: req => req.cookies.token,
+        credentialsRequired: false,
+    }), (req, res)=>{
+        if(req.user && req.user.user)
+            userDao.getUserName(req.user.user).then(user=> res.status(200).json(user));
+        else
+            res.status(401).end();
+    }
+)
 /**----FROM NOW ON ONLY PRIVATE APIs ----- */
 
 

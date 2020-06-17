@@ -1,3 +1,4 @@
+
 const db = require('../db/db');
 const bcrypt = require('bcrypt');
 
@@ -15,6 +16,19 @@ module.exports.checkEmailPassword=(email, password)=>{
                 else reject(undefined);
             }
         });
+    });
+}
+
+module.exports.getUserName=(id)=>{
+    return new Promise((resolve, reject) => {
+        const sql = "SELECT * FROM users WHERE id = ?"
+        db.get(sql, [id], (err, row) => {
+            if (err)
+                reject(err);
+            else if (!row)
+                reject(undefined);
+            else resolve(row.username);
+        })
     });
 }
 
