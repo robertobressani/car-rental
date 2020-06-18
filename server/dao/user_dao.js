@@ -6,7 +6,7 @@ module.exports.checkEmailPassword=(email, password)=>{
     return db.queryGet("SELECT * FROM users WHERE email = ?", [email]).then(row=>{
         if(checkPassword(password, row.password))
             return({user: row.username, id: row.id});
-        else throw{};
+        else throw "";
     });
 }
 
