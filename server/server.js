@@ -1,6 +1,7 @@
 const express = require('express');
 const morgan = require('morgan');
 const carDao= require('./dao/car_dao');
+const rentalDao= require('./dao/rental_dao');
 const jsonwebtoken = require('jsonwebtoken');
 const jwt=require('express-jwt');
 const cookieParser = require('cookie-parser');
@@ -108,6 +109,11 @@ app.use(
 
 app.post('/api/logout', (req, res) => {
     res.clearCookie('token').end();
+});
+
+app.get('/api/configuration', (req, res)=>{
+    //TODO add query data
+   rentalDao.searchRental({}).then(searchResult => res.json(searchResult));
 });
 
 app.listen(PORT, ()=>console.log(`Server running on http://localhost:${PORT}/`));
