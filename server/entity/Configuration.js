@@ -25,7 +25,11 @@ module.exports=  class Configuration{
 
     }
 
-    static of(){
-        //TODO implement
+    static of(obj){
+        const conf=new Configuration(obj.start, obj.end, obj.category, +obj.kilometer,JSON.parse(obj.unlimited), +obj.age,
+            +obj.extra_drivers, JSON.parse(obj.insurance) );
+        if(conf.isValid())
+            return conf;
+        throw {err: "Invalid configuration object"};
     }
 }
