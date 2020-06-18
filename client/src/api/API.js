@@ -1,5 +1,6 @@
 import Car from "../entity/Car";
 import Rental from "../entity/Rental";
+import {encodeQueryData} from "../utils/queryParams";
 
 const BASE_URL="/api/";
 
@@ -85,7 +86,8 @@ async function deleteRental(x) {
 }
 
 async function searchConfig(configuration){
-    const response  = await fetch(`${BASE_URL}/configuration`);
+    const query= encodeQueryData(configuration);
+    const response  = await fetch(`${BASE_URL}/configuration/?${query}`);
     if(response.ok && response.status === 200)
         return await response.json();
     const empty={};
