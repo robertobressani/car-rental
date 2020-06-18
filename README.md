@@ -33,6 +33,10 @@ All the REST APIs will begin with `/api/`
 
 ### "Private" APIs (accessible only with authentication token)
 
+- GET `/logout`
+  - no request body and parameters
+  - empty response, only clears the cookie
+
 
 ### TO BE implemented yet
 
@@ -55,7 +59,7 @@ All the REST APIs will begin with `/api/`
 - Table `cars` - contains data about car rental's car:
  >cars(	__id__ , category, brand, model)
 - Table `users` - contains infos about registered users:
- > users(__id__, username, password)
+ > users(__id__, username, email,  password)
 - Table `rentals` - contains info about rentals:
  > rentals(__id__, car_id, user_id, start_day, end_day, driver_age, extra_drivers, extra_insurance, kilometer, unlimited_km, price )
 
