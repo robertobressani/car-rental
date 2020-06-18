@@ -6,8 +6,10 @@ const BASE_URL="/api/";
 async function getCars(){
     const response = await fetch(`${BASE_URL}cars`);
     const jsonCars = await response.json();
-    if(!response.ok)
-        throw {status: response.status, message: jsonCars.msg }
+    if(!response.ok) {
+        const err = {status: response.status, message: jsonCars.msg}
+        throw err;
+    }
     return  jsonCars.map(json=>Car.of(json));
     //return [new Car(1,"Alfa", "A","Romeo", 100 ), new Car(2, "Fiat", "E", "500",500)];
 }
@@ -15,8 +17,10 @@ async function getCars(){
 async function getBrands(){
     const response = await fetch(`${BASE_URL}brands`);
     const jsonBrands = await response.json();
-    if(!response.ok)
-        throw {status: response.status, message: jsonBrands.msg }
+    if(!response.ok) {
+        const err = {status: response.status, message: jsonBrands.msg};
+        throw err;
+    }
     return  jsonBrands;
 
     //return ["Alfa", "Fiat"];
@@ -26,10 +30,10 @@ async function checkAuthentication() {
     const response =  await fetch(`${BASE_URL}login`);
     if(response.ok && response.status === 200)
         return await response.json();
-    throw {};
+    const empty={};
+    throw empty;
 }
 async function login(email, password){
-    //TODO implement
     const response =  await fetch(`${BASE_URL}login`, {
         method: 'POST',
         headers: {
@@ -41,16 +45,24 @@ async function login(email, password){
         return await response.json();
     switch (response.status) {
         case 401:
-            throw "Wrong username or password";
+            const err={err:"Wrong username or password"};
+            throw err;
         default:
-            throw "Something went wrong during the call";
+            const errmsg={err:"Something went wrong during the call"};
+            throw errmsg;
     }
 
 
 }
 
 async function logout(){
-    //TODO implement
+    const response =  await fetch(`${BASE_URL}logout`, {
+        method: 'POST'
+    });
+    if(response.ok)
+        return;
+    const err={err: "Error in logout call"};
+    throw err;
 }
 
 async function getRentals(future){
