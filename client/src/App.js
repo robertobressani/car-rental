@@ -62,8 +62,8 @@ class App extends React.Component {
     }
 
     doLogout=()=>{
-        this.setState({userName:"", loggedIn:false})
-        API.logout();
+        this.setState({verifiedLogin:false})
+        API.logout().then(()=>this.setState({userName:"", loggedIn:false, verifiedLogin:true})).catch(()=>{});
     }
 
     doLogin= (email, password)=>{
