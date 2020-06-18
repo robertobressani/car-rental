@@ -7,6 +7,7 @@ import AuthenticationContext from './AuthenticationContext.js';
 
 import moment from 'moment';
 import Configuration from '../entity/Configuration.js';
+import API from "../api/API";
 
 class Configurator extends React.Component {
     constructor(props) {
@@ -26,17 +27,18 @@ class Configurator extends React.Component {
         if (!this.state.submitted && this.state.configuration.isValid()) {
             console.log("that's the right time to update");
 
-            //TODO loading must be set to true (debug to false)
-            this.setState({submitted: true, loading: false});
+
+            this.setState({submitted: true, loading:true});
             let configuration = Object.assign(new Configuration(), {...this.state.configuration});
             if (configuration.unlimited)
                 //make no sense have kilometers per day set to a number
                 configuration.kilometer = 0;
-            //TODO add API call then
+
             //TODO add validation messages
-            //TODO remove this call (debug)
-            this.setState({price_num: {price: 1000, available: 2}})
-            //tthis.setState({ loading:false});
+            //TODO add error checking
+            API.searchConfig(configuration).then(result=>this.setState({price_num: result, loading: false}));
+
+
         }
     }
 
@@ -48,8 +50,8 @@ class Configurator extends React.Component {
             configuration[name]=value;
             if (name === "kilometer")
                 configuration.unlimited = +value === 150;
-            else if(name==="unlimited" && !value)
-                configuration.kilometer=149;
+            else if(name==="unlimited" )
+                configuration.kilometer= value ? 150 : 149;
             //setting submitted= false, so that a new load can be performed if valid
             return {configuration: configuration, submitted: false};
         });
@@ -109,19 +111,19 @@ function ConfiguratorForm(props) {
     return <Form className="row ">
         <Form.Group className="col-12 col-md-4">
             <Form.Label>Start date of rental:</Form.Label>
-            <Form.Control type="date" value={props.configuration.start ?
-                props.configuration.start.format("yyyy-MM-DD") : ""}
+            <Form.Control type="date" defaultValue={props.configuration.start ?
+                props.configuration.start.format("yyyy-MM-DD") : null}
                           onChange={(event) => props.updateValue("start", moment(event.target.value))}/>
         </Form.Group>
         <Form.Group className="col-12 col-md-4">
             <Form.Label>End date of rental:</Form.Label>
-            <Form.Control type="date" value={props.configuration.end ?
-                props.configuration.end.format("yyyy-MM-DD") : ""}
+            <Form.Control type="date" defaultValue={props.configuration.end ?
+                props.configuration.end.format("yyyy-MM-DD") : null}
                           onChange={(event) => props.updateValue("end", moment(event.target.value))}/>
         </Form.Group>
         <Form.Group className="col-12 col-md-4">
             <Form.Label> Category: </Form.Label>
-            <Form.Control as="select" dvalue={props.configuration.category}
+            <Form.Control as="select" defaultValue={props.configuration.category}
                           onChange={(event) => props.updateValue("category", event.target.value)}>
                 <option/>
                 <option>A</option>
@@ -133,13 +135,13 @@ function ConfiguratorForm(props) {
         </Form.Group>
         <Form.Group className="col-6 col-md-2">
             <Form.Label>Age of driver: </Form.Label>
-            <Form.Control type="number" value={props.configuration.age}
+            <Form.Control type="number" defaultValue={props.configuration.age}
                           onChange={(event) => props.updateValue("age", +event.target.value)}
                           min={18}/>
         </Form.Group>
         <Form.Group className="col-6 col-md-2">
             <Form.Label> Extra drivers: </Form.Label>
-            <Form.Control type="number" value={props.configuration.extra_drivers}
+            <Form.Control type="number" defaultValue={props.configuration.extra_drivers} min={0}
                           onChange={(event) => props.updateValue("extra_drivers", +event.target.value)}/>
         </Form.Group>
         <Form.Group className="col-12 col-md-4">
