@@ -84,6 +84,14 @@ async function deleteRental(x) {
     //TODO implement
 }
 
+async function searchConfig(configuration){
+    const response  = await fetch(`${BASE_URL}/configuration`);
+    if(response.ok && response.status === 200)
+        return await response.json();
+    const empty={};
+    throw empty;
+}
 
-const API={checkAuthentication, logout, login, getCars, getBrands, getRentals, deleteRental}
+
+const API={checkAuthentication, logout, login, getCars, getBrands, getRentals, deleteRental, searchConfig}
 export default API;
