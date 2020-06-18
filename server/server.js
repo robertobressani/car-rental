@@ -1,5 +1,6 @@
 const express = require('express');
 const morgan = require('morgan');
+const Configuration = require('./entity/Configuration');
 const carDao= require('./dao/car_dao');
 const rentalDao= require('./dao/rental_dao');
 const jsonwebtoken = require('jsonwebtoken');
@@ -98,7 +99,9 @@ app.get(`${BASE_URL}login`, jwt({
     }
 )
 
-
+/**
+ * Next APIs will be protected from JWT authentication
+ */
 app.use(
     jwt({
         secret: jwtSecret,
@@ -106,14 +109,24 @@ app.use(
     })
 );
 /**----FROM NOW ON ONLY PRIVATE APIs ----- */
-
+/**
+ * REST API for deleting the cookie
+ * @param none
+ * @return none
+ */
 app.post('/api/logout', (req, res) => {
     res.clearCookie('token').end();
 });
 
+/**
+ * REST API for getting number of vehicles and price for a configuration object (sent via query params)
+ * @param the configuratio object
+ * @return {price: ... , available: ...}
+ */
 app.get('/api/configuration', (req, res)=>{
-    //TODO add query data
-   rentalDao.searchRental({}).then(searchResult => res.json(searchResult));
+
+   rentalDao.searchRental(Configuration.of(req.query), req.user.user)
+       .then(searchResult => res.json(searchResult));
 });
 
 app.listen(PORT, ()=>console.log(`Server running on http://localhost:${PORT}/`));
