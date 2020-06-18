@@ -96,7 +96,18 @@ app.get(`${BASE_URL}login`, jwt({
             res.status(401).end();
     }
 )
+
+
+app.use(
+    jwt({
+        secret: jwtSecret,
+        getToken: req => req.cookies.token
+    })
+);
 /**----FROM NOW ON ONLY PRIVATE APIs ----- */
 
+app.post('/api/logout', (req, res) => {
+    res.clearCookie('token').end();
+});
 
 app.listen(PORT, ()=>console.log(`Server running on http://localhost:${PORT}/`));
