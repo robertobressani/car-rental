@@ -3,5 +3,5 @@ module.exports= {
     baseURL: "/api/",
     secret: "SOMETHING VERY SECRET",
     DBsource: './db/car_rental.db',
-    expireSec: 300
+    expireSec: 60*60 //1 hour token validity
 }
