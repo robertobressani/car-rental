@@ -114,7 +114,7 @@ app.use(
  * @param none
  * @return none
  */
-app.post('/api/logout', (req, res) => {
+app.post(`${BASE_URL}logout`, (req, res) => {
     res.clearCookie('token').end();
 });
 
@@ -123,7 +123,7 @@ app.post('/api/logout', (req, res) => {
  * @param the configuratio object
  * @return {price: ... , available: ...}
  */
-app.get('/api/configuration', (req, res)=>{
+app.get(`${BASE_URL}configuration`, (req, res)=>{
 
    rentalDao.searchRental(Configuration.of(req.query), req.user.user)
        .then(searchResult => res.json(searchResult));
