@@ -87,7 +87,7 @@ async function deleteRental(x) {
 
 async function searchConfig(configuration){
     const query= encodeQueryData(configuration);
-    const response  = await fetch(`${BASE_URL}/configuration/?${query}`);
+    const response  = await fetch(`${BASE_URL}/configuration?${query}`);
     if(response.ok && response.status === 200)
         return await response.json();
     const empty={};
