@@ -3,7 +3,7 @@
 
 ## React client application routes
 
-- Route `/`: will redirect to `/cars`
+- Route `/`:  will redirect to `/cars`
 - Route `/cars`: main page that shows all the cars, that can filter by category and brand
 - Route `/login`: login page (together with `/`, is the only one accisible to non logged users)
 - Route `/config`: configurator page
@@ -13,7 +13,7 @@
 
 ## REST API server
 
-All the REST APIs will begin with `/api/`
+All the REST APIs will begin with `/api` (omitted in the following part)
 
 
 ### "Public" APIs (accessible without authentication token)
@@ -28,7 +28,7 @@ All the REST APIs will begin with `/api/`
   - request body with username and password
   - if successful will set the cookie and return the username
 - GET `/login`
-  - no request body and parameters
+  - no request body and parameters, it is used to check whether the user is logged in or not
   - if user is already  logged in, it will return the username
 
 ### "Private" APIs (accessible only with authentication token)
@@ -36,14 +36,16 @@ All the REST APIs will begin with `/api/`
 - GET `/logout`
   - no request body and parameters
   - empty response, only clears the cookie
-
+- GET `/configuration` <!--TODO see which info give -->
+  - request URL contains the requested configuration parameters as in the example:
+`/configuration?start=2020-06-22&end=2020-06-22&category=A&kilometer=0&unlimited=true&age=18&extra_drivers=0&insurance=false`
+  - response body contains the available cars
 
 ### TO BE implemented yet
 
 
-- GET `/config` [requires authentication] <!--TODO see which info give -->
-  - request body contains the parameters of the searched configuration 
-  - response body contains the available cars
+
+
 - POST `/rentals` [requires authentication]
   - request body with rental configuration (+ selected car) and payment infos (a single request is performed) to perform a new rental for the logged user
   - empty body (status code is meaningful)
