@@ -168,8 +168,9 @@ function AvailableCar(props) {
         return <Alert variant="success">
             <Alert.Heading>We've found a car for you!</Alert.Heading>
             <p>
-                There are {props.price_num.available} car{props.price_num.available > 1 ? "s" : ""} that satisf
-                {props.price_num.available > 1 ? "y" : "ies"} your search available at {props.price_num.price} €
+                There {props.price_num.available > 1 ? "are" : "is"} {props.price_num.available>1 ? props.price_num.available : "a"}
+                car{props.price_num.available > 1 ? "s" : ""} that satisf{props.price_num.available > 1 ? "y" : "ies"}
+                your search, available at <strong>{props.price_num.price} €</strong>
             </p>
             <hr/>
             <div className="d-flex justify-content-end">
