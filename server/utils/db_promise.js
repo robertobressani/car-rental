@@ -35,3 +35,21 @@ module.exports.queryGet = (query, params) => {
         });
     });
 };
+
+module.exports.queryRun = (query, params) => {
+    return new Promise((resolve, reject) => {
+        if (params)
+            db.run(query, params, (err) => {
+                if (err)
+                    reject(err);
+                else
+                    resolve();
+            });
+        else  db.run(query, (err) => {
+            if (err)
+                reject(err);
+            else
+                resolve();
+        });
+    });
+};
