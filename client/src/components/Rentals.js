@@ -3,6 +3,7 @@ import AuthenticationContext from "./AuthenticationContext.js";
 import {Redirect} from "react-router-dom";
 import {Jumbotron, ProgressBar, Table, Alert} from "react-bootstrap";
 import API from '../api/API.js';
+//TODO change delete icon
 import DeleteIco from './img/eraser.svg';
 import YesLogo from './img/tick.svg';
 import Spinner from "react-bootstrap/Spinner";
@@ -26,11 +27,12 @@ function Rentals() {
 	}
 
 	useEffect(() => {
-		API.getRentals(true).then(x => {
+		API.getRentals(false).then(x => {
 			setFuture(x);
 			setLoadFuture(true);
 		});
-		API.getRentals(false).then(x => {
+		//TODO add error handling
+		API.getRentals(true).then(x => {
 			setPast(x);
 			setLoadPast(x);
 		})
@@ -72,14 +74,14 @@ function RentalTable(props) {
 			{props.rentals.map(x => {
 				return <tr key={x.id}>
 					<td>{x.id}</td>
-					<td>{x.start.format("dd-MM-yyyy")+"- "+x.end.format("dd-MM-yyyy")}</td>
+					<td>{"From "+x.start.format("DD-MM-yyyy")+" to "+x.end.format("DD-MM-yyyy")}</td>
 					<td>{x.car.category}</td>
 					<td className="d-none d-lg-table-cell">{x.age}</td>
 					<td className="d-none d-lg-table-cell">{x.extra_drivers}</td>
 					<td className="d-none d-sm-table-cell">{x.unlimited? "Unlimited" : x.kilometer}</td>
 					<td className="d-none d-lg-table-cell">{x.insurance ?
 						<img alt="insurance-present" height={20} src={YesLogo}/>: null }</td>
-					<td>{x.car.price}</td>
+					<td>{x.car.price.toFixed(2)}</td>
 					<td className="d-none d-sm-table-cell">{x.car.brand}</td>
 					<td className="d-none d-sm-table-cell">{x.car.model}</td>
 					{props.future ? new Set([...props.loading]).has(x.id) ?
