@@ -46,13 +46,15 @@ function Rentals() {
 			<Alert.Heading>An error occurred</Alert.Heading>
 			<p>{error}</p>
 		</Alert>
-		<RentalTable name="Your future rentals" future={true} delete={x=>deleteR(x)} rentals={futureRentals} loading={loading}/>
-		<RentalTable name="Your past rentals" rentals={pastRentals}/></>;
+		<RentalTable name="Your future rentals:" future={true} delete={x=>deleteR(x)} rentals={futureRentals} loading={loading}/>
+		<RentalTable name="Your past rentals:" rentals={pastRentals}/></>;
 }
 
 
 
 function RentalTable(props) {
+	if(!props.rentals.length)
+		return <></>;
 	return <> <Jumbotron className="jumbotron-space"><h4>{props.name}</h4></Jumbotron>
 		<Table striped bordered hover responsive>
 			<thead>
