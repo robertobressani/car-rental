@@ -2,6 +2,7 @@ const db= require('../utils/db_promise');
 const moment = require('moment');
 const dateUtils = require("../utils/dateUtils");
 const rentalConfig = require('../config/rental_conf');
+const Rental = require('../entity/Rental');
 
 const availableCarsQuery= "SELECT COUNT(*) AS total " +
     "FROM cars " +
@@ -18,11 +19,24 @@ const numCarPerCategoryQuery="SELECT COUNT(*) AS cars " +
     "FROM cars " +
     "WHERE category= ? ;";
 
+const rentalsQuery="SELECT *, r.id as rental_id " + //avoids duplicated name
+    "FROM rentals r, cars c  " +
+    "WHERE c.id= r.car_id AND  user_id = ? and end_day ";
+
 module.exports.searchRental=async (conf, userId)=>{
     await db.queryRun("BEGIN TRANSACTION");
     const res= computePrice(conf, userId);
     await db.queryRun("COMMIT TRANSACTION");
     return res;
+}
+
+module.exports.getRentals=async(past, userId)=>{
+    let symbol=">= ?;";
+    if(past)
+        symbol = "< ?;";
+    const res= await db.queryAll(rentalsQuery+symbol, [userId, dateUtils.dateFormat(new moment()) ]);
+    return res.map(x => Rental.of(x));
+
 }
 
 async function computePrice(conf, userId) {
@@ -42,7 +56,7 @@ async function computePrice(conf, userId) {
              */
             db.queryAll(numCarPerCategoryQuery, [conf.category])
         ]);
-   
+
     if(results[0].total > 0) {
         //cars available
         const price_per_day = rentalConfig.prices.get(conf.category);
