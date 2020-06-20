@@ -45,7 +45,7 @@ All the REST APIs will begin with `/api` (omitted in the following part)
   - response body contains the list of rentals matching the search for the logged user
 - POST `/pay`
   - request body contains credit card and amount to pay
-  - no response body, only status code is meaningful
+  - response body with fake payment code number in case of good request
 
 ### TO BE implemented yet
 
