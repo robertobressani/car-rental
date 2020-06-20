@@ -66,12 +66,19 @@ async function logout(){
     throw err;
 }
 
-async function getRentals(future){
-    //TODO implement
-    return [new Rental(1, null, null, 200, false, 18, 5, true,
-        new Car(1,"Alfa", "A","Romeo", 100 ) ),
-        new Rental(2, "", "", 200, true, 18, 5, true,
-            new Car(1,"Alfa", "A","Romeo", 100 ) )];
+async function getRentals(ended){
+    const response = await fetch(`${BASE_URL}rentals?ended=${ended}`)
+    if(response.ok){
+        const result= await response.json();
+        console.log(result.map(x=>Rental.of(x)));
+        return result.map(x=>Rental.of(x));
+    }
+    const err={err: "Error in loading rentals"};
+    throw err;
+    // return [new Rental(1, null, null, 200, false, 18, 5, true,
+    //     new Car(1,"Alfa", "A","Romeo", 100 ) ),
+    //     new Rental(2, "", "", 200, true, 18, 5, true,
+    //         new Car(1,"Alfa", "A","Romeo", 100 ) )];
 }
 
 async function deleteRental(x) {
