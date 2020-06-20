@@ -19,6 +19,7 @@ export default class Rental{
         r.start=moment(r.start);
         r.end=moment(r.end);
         r.car= Object.assign(new Car(), r.car);
+        return r;
     }
 
 }
