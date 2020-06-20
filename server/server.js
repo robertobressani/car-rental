@@ -1,14 +1,15 @@
 const express = require('express');
 const morgan = require('morgan');
-const Configuration = require('./entity/Configuration');
-const carDao= require('./dao/car_dao');
-const rentalDao= require('./dao/rental_dao');
 const jsonwebtoken = require('jsonwebtoken');
 const jwt=require('express-jwt');
 const cookieParser = require('cookie-parser');
-
+const {check, validationResult} = require('express-validator');
 
 const serverConf =require('./config/server_conf');
+const Configuration = require('./entity/Configuration');
+
+const carDao= require('./dao/car_dao');
+const rentalDao= require('./dao/rental_dao');
 const userDao = require("./dao/user_dao");
 
 const expireTime = serverConf.expireSec; //seconds
@@ -128,11 +129,31 @@ app.get(`${BASE_URL}configuration`, (req, res)=>{
    rentalDao.searchRental(Configuration.of(req.query), req.user.user)
        .then(searchResult => res.json(searchResult));
 });
-
+/**
+ * REST API for getting the list of rentals
+ * @param ended: boolean to indicate future or past rentals
+ * @returns JSON list of rentals
+ */
 app.get(`${BASE_URL}rentals`, (req, res)=>{
     //TODO add bad req
     rentalDao.getRentals(JSON.parse(req.query.ended), req.user.user)
         .then(rentals=>res.json(rentals))
-})
+});
+
+/**
+ * stub REST API for payment handling
+ * @param credit card data
+ * @param amount to pay
+ * @return 200 in case of success, otherwise 400
+ */
+app.post(`${BASE_URL}pay`,[check('credit_card.name').isLength({min:5}),
+       check('credit_card.number').isCreditCard(),
+       check('credit_card.cvv').isLength({min:3, max:3}).matches("[0-9]+"),
+       check('amount').isFloat()], (req, res)=>{
+        if(!validationResult(req).isEmpty())
+            res.status(400).end();
+        else
+            res.status(200).end();
+});
 
 app.listen(PORT, ()=>console.log(`Server running on http://localhost:${PORT}/`));
