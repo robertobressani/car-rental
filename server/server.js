@@ -124,9 +124,15 @@ app.post(`${BASE_URL}logout`, (req, res) => {
  * @return {price: ... , available: ...}
  */
 app.get(`${BASE_URL}configuration`, (req, res)=>{
-
+    //TODO add error handling
    rentalDao.searchRental(Configuration.of(req.query), req.user.user)
        .then(searchResult => res.json(searchResult));
 });
+
+app.get(`${BASE_URL}rentals`, (req, res)=>{
+    //TODO add bad req
+    rentalDao.getRentals(JSON.parse(req.query.ended), req.user.user)
+        .then(rentals=>res.json(rentals))
+})
 
 app.listen(PORT, ()=>console.log(`Server running on http://localhost:${PORT}/`));
