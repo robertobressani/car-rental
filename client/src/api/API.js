@@ -110,8 +110,18 @@ async function saveRental(configuration, creditCard, price) {
         },
         body: JSON.stringify({credit_card: creditCard, amount: price})
     });
+
     if(payment_res.ok){
-        //TODO add reservation call
+
+        const msg= await payment_res.json(); //the fake receipt payment code
+        const reservation_res =  await fetch(`${BASE_URL}rentals`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({configuration: configuration, amount: price, receipt: msg.receipt})
+        });
+        //TODO implement success
     }else{
         //TODO handle error
     }
