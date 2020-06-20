@@ -125,8 +125,11 @@ app.post(`${BASE_URL}logout`, (req, res) => {
  * @return {price: ... , available: ...}
  */
 app.get(`${BASE_URL}configuration`, (req, res)=>{
+    const conf = Configuration.of(req.query);
     //TODO add error handling
-   rentalDao.searchRental(Configuration.of(req.query), req.user.user)
+   if(!conf.isValid()){}
+
+   rentalDao.searchRental(conf, req.user.user)
        .then(searchResult => res.json(searchResult));
 });
 /**
@@ -144,16 +147,37 @@ app.get(`${BASE_URL}rentals`, (req, res)=>{
  * stub REST API for payment handling
  * @param credit card data
  * @param amount to pay
- * @return 200 in case of success, otherwise 400
+ * @returns a fake payment code
  */
 app.post(`${BASE_URL}pay`,[check('credit_card.name').isLength({min:5}),
        check('credit_card.number').isCreditCard(),
        check('credit_card.cvv').isLength({min:3, max:3}).matches("[0-9]+"),
        check('amount').isFloat()], (req, res)=>{
         if(!validationResult(req).isEmpty())
+            //sending fake payment receipt code
             res.status(400).end();
         else
-            res.status(200).end();
+            res.json({receipt: Math.floor(Math.random()*999999)});
+
 });
+
+/**
+ * REST API to add a new rental
+ * @param configuration: configuration object
+ * @param amount: amount to pay
+ * @param receipt: payment code
+ * @return none, only status code
+ */
+app.post(`${BASE_URL}rentals`, [check('amount').isFloat(), check('receipt').isInt()], (req,res)=>{
+    console.log(req.body);
+    const conf = Configuration.of(req.body.configuration);
+    if(!conf.isValid() || !validationResult(req).isEmpty()){
+        //TODO implement error throwing
+        console.log("Message not valid")
+    }
+    //TODO implement dao
+    console.log(conf);
+});
+
 
 app.listen(PORT, ()=>console.log(`Server running on http://localhost:${PORT}/`));
