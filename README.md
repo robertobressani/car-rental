@@ -36,10 +36,16 @@ All the REST APIs will begin with `/api` (omitted in the following part)
 - GET `/logout`
   - no request body and parameters
   - empty response, only clears the cookie
-- GET `/configuration` <!--TODO see which info give -->
+- GET `/configuration` 
   - request URL contains the requested configuration parameters as in the example:
 `/configuration?start=2020-06-22&end=2020-06-22&category=A&kilometer=0&unlimited=true&age=18&extra_drivers=0&insurance=false`
   - response body contains the available cars
+- GET `/rentals?ended=true|false` 
+  - no request body, params indicates whether the requested rentals are the future ones or the historical ones
+  - response body contains the list of rentals matching the search for the logged user
+- POST `/pay`
+  - request body contains credit card and amount to pay
+  - no response body, only status code is meaningful
 
 ### TO BE implemented yet
 
@@ -49,9 +55,7 @@ All the REST APIs will begin with `/api` (omitted in the following part)
 - POST `/rentals` [requires authentication]
   - request body with rental configuration (+ selected car) and payment infos (a single request is performed) to perform a new rental for the logged user
   - empty body (status code is meaningful)
-- GET `/rentals?history=...` [requires authentication]
-  - no request body, params indicates whether the requested rentals are the future ones or the historical ones
-  - response body contains the list of rentals matching the search for the logged user
+
 - DELETE `/rentals/:id`
   - no request body, only GET parameters indicating the id of the rental to delete
   - no response body (status code is meaningful)
