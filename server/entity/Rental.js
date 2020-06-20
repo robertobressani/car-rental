@@ -16,6 +16,10 @@ module.exports= class Rental{
 
     static of(row){
         //TODO implement
+        //TODO try to remove category column from rental
+        return new Rental(row.rental_id, moment(row.start_day), moment(row.end_day), row.unlimited_km ? -1 :row.kilometer,
+            !!row.unlimited_km, row.driver_age, row.extra_drivers, row.extra_insurance,
+            new Car(row.car_id,row.brand, row.category,row.model, row.price ) );
     }
 
 }
