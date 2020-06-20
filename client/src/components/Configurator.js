@@ -69,11 +69,15 @@ class Configurator extends React.Component {
         this.updateCardValue("focused", e.target.name);
     }
 
-    checkPayment(e) {
+    checkPayment=(e)=> {
         e.preventDefault();
         if (e.target.checkValidity()) {
             console.log("form is valid");
             //TODO add API call and state management
+            let creditCard={...this.state.creditCard};
+            delete creditCard['focused'];
+            API.saveRental(this.state.configuration, creditCard, this.state.price_num.price).then(r => {})
+
         }
     }
 
