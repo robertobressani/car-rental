@@ -40,7 +40,7 @@ async function login(email, password){
         headers: {
             'Content-Type': 'application/json',
         },
-        body: JSON.stringify({email: email, password: password}),
+        body: JSON.stringify({email: email, password: password})
     });
     if(response.ok)
         return await response.json();
@@ -101,6 +101,21 @@ async function searchConfig(configuration){
     throw empty;
 }
 
+async function saveRental(configuration, creditCard, price) {
 
-const API={checkAuthentication, logout, login, getCars, getBrands, getRentals, deleteRental, searchConfig}
+    const payment_res = await fetch(`${BASE_URL}pay`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({credit_card: creditCard, amount: price})
+    });
+    if(payment_res.ok){
+        //TODO add reservation call
+    }else{
+        //TODO handle error
+    }
+}
+
+const API={checkAuthentication, logout, login, getCars, getBrands, getRentals, deleteRental, searchConfig, saveRental}
 export default API;
