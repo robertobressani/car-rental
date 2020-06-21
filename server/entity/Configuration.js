@@ -1,5 +1,5 @@
 const moment = require('moment');
-const dateUtils = require('../utils/dateUtils');
+const {dateDiff} = require("../utils/dateUtils");
 
 module.exports=  class Configuration{
     constructor(start="", end="", category="", kilometer=0, unlimited=false, age=18, extra_drivers=0, insurance=false) {
@@ -19,8 +19,8 @@ module.exports=  class Configuration{
         today.minute(0);
         today.second(0)
         today.millisecond(0);
-        return this.start && dateUtils.dateDiff(this.start, today) > 0
-            && this.end && dateUtils.dateDiff(this.end, this.start) >= 0 && ["A", "B", "C", "D", "E", "F"].includes(this.category)
+        return this.start && this.start.isValid() && dateDiff(this.start, today) > 0
+             && this.end && this.end.isValid() && dateDiff(this.end, this.start) >= 0 && ["A", "B", "C", "D", "E", "F"].includes(this.category)
             && (this.unlimited || this.kilometer > 0) && this.age >= 18 && +this.extra_drivers >= 0; //check whether it's integer
 
     }
