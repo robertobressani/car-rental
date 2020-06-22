@@ -121,10 +121,10 @@ async function saveRental(configuration, creditCard, price) {
             },
             body: JSON.stringify({configuration: configuration, amount: price, receipt: msg.receipt})
         });
-        //TODO implement success
-    }else{
-        //TODO handle error
+        if(reservation_res.ok)
+            return true;
     }
+     return false;
 }
 
 const API={checkAuthentication, logout, login, getCars, getBrands, getRentals, deleteRental, searchConfig, saveRental}
