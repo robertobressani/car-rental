@@ -4,6 +4,9 @@ import {encodeQueryData} from "../utils/queryParams";
 
 const BASE_URL="/api/";
 
+//TODO put global const error
+//TODO evaluate boolean return
+
 async function getCars(){
     const response = await fetch(`${BASE_URL}cars`);
     const jsonCars = await response.json();
@@ -82,14 +85,18 @@ async function getRentals(ended){
 }
 
 async function deleteRental(x) {
-    console.log("I'm deleting "+x);
-    return new Promise(((resolve, reject) =>
-            setTimeout(()=>
-                    resolve("Roberto")
-                    // reject()
-                , 2000)
-    ));
-    //TODO implement
+    // console.log("I'm deleting "+x);
+    // return new Promise(((resolve, reject) =>
+    //         setTimeout(()=>
+    //                 resolve("Roberto")
+    //                 // reject()
+    //             , 2000)
+    // ));
+    //TODO change error handling at upper level
+    const response  = await fetch(`${BASE_URL}/rentals/${x}`,{
+        method: 'DELETE'
+    });
+    return response.ok;
 }
 
 async function searchConfig(configuration){
