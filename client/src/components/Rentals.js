@@ -7,7 +7,10 @@ import API from '../api/API.js';
 import DeleteIco from './img/eraser.svg';
 import YesLogo from './img/tick.svg';
 import Spinner from "react-bootstrap/Spinner";
+import {dateDiff, dateFormat} from "../utils/dateDiff";
+import moment from "moment";
 
+//TODO remove delete icon for rentals that have already started
 
 function Rentals() {
 	const value = useContext(AuthenticationContext);
@@ -76,7 +79,7 @@ function RentalTable(props) {
 			{props.rentals.map(x => {
 				return <tr key={x.id}>
 					<td>{x.id}</td>
-					<td>{"From "+x.start.format("DD-MM-yyyy")+" to "+x.end.format("DD-MM-yyyy")}</td>
+					<td>{"From "+dateFormat(x.start)+" to "+dateFormat(x.end)}</td>
 					<td>{x.car.category}</td>
 					<td className="d-none d-lg-table-cell">{x.age}</td>
 					<td className="d-none d-lg-table-cell">{x.extra_drivers}</td>
@@ -86,9 +89,14 @@ function RentalTable(props) {
 					<td>{x.car.price.toFixed(2)}</td>
 					<td className="d-none d-sm-table-cell">{x.car.brand}</td>
 					<td className="d-none d-sm-table-cell">{x.car.model}</td>
-					{props.future ? new Set([...props.loading]).has(x.id) ?
-						<td><Spinner animation="border" size="sm" /></td> :<td><img alt="delete" height={20} src={DeleteIco}
-																		   onClick={()=>props.delete(x.id)}/></td> : null}
+					{props.future ?
+						<td>{
+							dateDiff(x.start, moment())>0 ?
+								(props.loading.includes(x.id) ?
+									<Spinner animation="border" size="sm" /> :<img alt="delete" height={20} src={DeleteIco}
+																								onClick={()=>props.delete(x.id)}/> )
+							: null //TODO add tooltip saying the rental cannot be deleted if started
+						}</td> :null}
 				</tr>
 			})}
 			</tbody>
