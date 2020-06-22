@@ -39,6 +39,24 @@ module.exports.getRentals=async(past, userId)=>{
 
 }
 
+module.exports.addRental= async(conf, price, userId)=>{
+    await db.queryRun("BEGIN TRANSACTION");
+    const res= await computePrice(conf, userId);
+    if(res.price!==price){
+        await db.queryRun("ROLLBACK TRANSACTION");
+        throw "Invalid price request";
+    }
+    //TODO implement
+    const carId = (await db.queryGet(chooseCarQuery, [conf.category, dateUtils.dateFormat(conf.start),
+        dateUtils.dateFormat(conf.end), dateUtils.dateFormat(conf.start), dateUtils.dateFormat(conf.end)] )).id;
+    console.log(carId);
+
+    await db.queryRun(insertRentalQuery, [userId, carId,dateUtils.dateFormat(conf.start),
+        dateUtils.dateFormat(conf.end), conf.kilometer, conf.unlimited, conf.age,conf.extra_drivers, conf.insurance ,
+        price]);
+    await db.queryRun("COMMIT TRANSACTION");
+}
+
 async function computePrice(conf, userId) {
     const results = await Promise.all(
         [
