@@ -150,7 +150,8 @@ app.get(`${BASE_URL}rentals`, (req, res)=>{
  * @returns a fake payment code
  */
 app.post(`${BASE_URL}pay`,[check('credit_card.name').isLength({min:5}),
-       check('credit_card.number').isCreditCard(),
+       //check('credit_card.number').isCreditCard(), //TODO see if is a good idea to use isCreditCard()
+       check('credit_card.number').matches("[0-9]{16}"),
        check('credit_card.cvv').isLength({min:3, max:3}).matches("[0-9]+"),
        check('amount').isFloat()], (req, res)=>{
         if(!validationResult(req).isEmpty())
