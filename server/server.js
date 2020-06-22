@@ -153,7 +153,6 @@ app.post(`${BASE_URL}pay`,[check('credit_card.name').isLength({min:5}),
        check('credit_card.number').isCreditCard(),
        check('credit_card.cvv').isLength({min:3, max:3}).matches("[0-9]+"),
        check('amount').isFloat()], (req, res)=>{
-        console.log(validationResult(req));
         if(!validationResult(req).isEmpty())
             //sending fake payment receipt code
             res.status(400).end();
@@ -174,11 +173,29 @@ app.post(`${BASE_URL}rentals`, [check('amount').isFloat(), check('receipt').isIn
     const conf = Configuration.of(req.body.configuration);
     if(!conf.isValid() || !validationResult(req).isEmpty()){
         res.status(400).end();
+    }else {
+        rentalDao.addRental(conf, req.body.amount, req.user.user)
+            .then(() => {
+                res.status(200).end()
+            })
+            .catch(() => res.status(500).end())
     }
-    rentalDao.addRental(conf, req.body.amount,req.user.user)
-        .then(()=>{res.status(200).end()})
-        .catch(()=>res.status(500).end())
-    console.log(conf);
+});
+
+/**
+ * delete a rental with the given Id, if the rentals is not started yet
+ * @param rentalID of the rental to delete
+ * @return 400 or 200 as status code
+ */
+app.delete(`${BASE_URL}rentals/:rentalId`, [check('rentalId').isInt()], (req, res)=>{
+    if( !validationResult(req).isEmpty())
+        res.status(400).end();
+    else
+        rentalDao.deleteRental(req.user.user, +req.params.rentalId)
+            .then((result)=>res.status(result? 200 : 400).end());
+
+
+
 });
 
 
