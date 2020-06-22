@@ -11,6 +11,14 @@ const availableCarsQuery= "SELECT COUNT(*) AS total " +
                     "WHERE (start_day >= ? AND start_day <= ?) " +
                     "OR ( end_day >= ? AND end_day <= ? ));";
 
+const chooseCarQuery="SELECT id " +
+    "FROM cars " +
+    "WHERE category= ? AND id NOT IN ( SELECT car_id " +
+                        "FROM rentals " +
+                        "WHERE (start_day >= ? AND start_day <= ?) " +
+                        "OR ( end_day >= ? AND end_day <= ? )) " +
+    "LIMIT 1;";
+
 const numPastRentalsQuery="SELECT COUNT(*) AS num_rental " +
     "FROM rentals " +
     "WHERE user_id= ? AND end_day < ? ;";
@@ -22,6 +30,12 @@ const numCarPerCategoryQuery="SELECT COUNT(*) AS cars " +
 const rentalsQuery="SELECT *, r.id as rental_id " + //avoids duplicated name
     "FROM rentals r, cars c  " +
     "WHERE c.id= r.car_id AND  user_id = ? and end_day ";
+
+const insertRentalQuery= "INSERT INTO rentals(user_id, car_id, start_day, end_day, kilometer, unlimited_km, driver_age," +
+    " extra_drivers, extra_insurance, price) " +
+    "VALUES (?,?,?,?,?,?,?,?,?,?);";
+
+const deleteRentalQuery = "DELETE FROM rentals WHERE id=? AND user_id=? AND start_day>?;";
 
 module.exports.searchRental=async (conf, userId)=>{
     await db.queryRun("BEGIN TRANSACTION");
@@ -46,7 +60,7 @@ module.exports.addRental= async(conf, price, userId)=>{
         await db.queryRun("ROLLBACK TRANSACTION");
         throw "Invalid price request";
     }
-    //TODO implement
+    //TODO add some checks
     const carId = (await db.queryGet(chooseCarQuery, [conf.category, dateUtils.dateFormat(conf.start),
         dateUtils.dateFormat(conf.end), dateUtils.dateFormat(conf.start), dateUtils.dateFormat(conf.end)] )).id;
     console.log(carId);
@@ -55,6 +69,11 @@ module.exports.addRental= async(conf, price, userId)=>{
         dateUtils.dateFormat(conf.end), conf.kilometer, conf.unlimited, conf.age,conf.extra_drivers, conf.insurance ,
         price]);
     await db.queryRun("COMMIT TRANSACTION");
+}
+
+module.exports.deleteRental=async (userId, rentalId)=>{
+    const res= await db.queryRun(deleteRentalQuery, [rentalId, userId, dateUtils.dateFormat(moment())]);
+    return res===1;
 }
 
 async function computePrice(conf, userId) {
