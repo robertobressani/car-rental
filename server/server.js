@@ -153,6 +153,7 @@ app.post(`${BASE_URL}pay`,[check('credit_card.name').isLength({min:5}),
        check('credit_card.number').isCreditCard(),
        check('credit_card.cvv').isLength({min:3, max:3}).matches("[0-9]+"),
        check('amount').isFloat()], (req, res)=>{
+        console.log(validationResult(req));
         if(!validationResult(req).isEmpty())
             //sending fake payment receipt code
             res.status(400).end();
@@ -172,10 +173,11 @@ app.post(`${BASE_URL}rentals`, [check('amount').isFloat(), check('receipt').isIn
     console.log(req.body);
     const conf = Configuration.of(req.body.configuration);
     if(!conf.isValid() || !validationResult(req).isEmpty()){
-        //TODO implement error throwing
-        console.log("Message not valid")
+        res.status(400).end();
     }
-    //TODO implement dao
+    rentalDao.addRental(conf, req.body.amount,req.user.user)
+        .then(()=>{res.status(200).end()})
+        .catch(()=>res.status(500).end())
     console.log(conf);
 });
 
