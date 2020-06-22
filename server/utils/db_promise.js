@@ -39,17 +39,17 @@ module.exports.queryGet = (query, params) => {
 module.exports.queryRun = (query, params) => {
     return new Promise((resolve, reject) => {
         if (params)
-            db.run(query, params, (err) => {
+            db.run(query, params, function(err){
                 if (err)
                     reject(err);
                 else
-                    resolve();
+                    resolve(this.changes);
             });
-        else  db.run(query, (err) => {
+        else  db.run(query, function(err) {
             if (err)
                 reject(err);
             else
-                resolve();
+                resolve(this.changes);
         });
     });
 };
