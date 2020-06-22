@@ -9,11 +9,13 @@ import moment from 'moment';
 import Configuration from '../entity/Configuration.js';
 import API from "../api/API";
 
+//TODO pass to server date and not moment
+
 class Configurator extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            submitted: false, loading: false,
+            submitted: false, loading: false, completed:false,
             configuration: new Configuration(), price_num: {price: -1, available: -1},
             creditCard: {cvv: "", focused: "", name: "", number: ""}
         }
@@ -73,10 +75,13 @@ class Configurator extends React.Component {
         e.preventDefault();
         if (e.target.checkValidity()) {
             console.log("form is valid");
-            //TODO add API call and state management
+            //TODO add error management
             let creditCard={...this.state.creditCard};
             delete creditCard['focused'];
-            API.saveRental(this.state.configuration, creditCard, this.state.price_num.price).then(r => {})
+            API.saveRental(this.state.configuration, creditCard, this.state.price_num.price).then(r => {
+                if(r)
+                    this.setState({completed:true});
+            });
 
         }
     }
@@ -87,7 +92,9 @@ class Configurator extends React.Component {
             if (!value.verifiedLogin)
                 return <Jumbotron className="jumbotron-space"><ProgressBar animated now={100}/></Jumbotron>;
             if (!value.loggedIn)
-                return <Redirect to={"/login"}/>
+                return <Redirect to={"/login"}/>;
+            if(this.state.completed)
+                return <Redirect to={"/rentals"}/>;
             return <><Jumbotron className=" jumbotron-space">
                 <ConfiguratorForm updateValue={(name, value) => this.updateConfigurationValue(name, value)}
                                   configuration={this.state.configuration}/>
