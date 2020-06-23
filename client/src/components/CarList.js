@@ -1,6 +1,8 @@
 import React from 'react';
-import {Button, ButtonGroup, Jumbotron, Nav, ProgressBar, Col, Table} from 'react-bootstrap';
+import {Button, Row, Jumbotron, Nav, ProgressBar, Col, Table} from 'react-bootstrap';
 import API from "../api/API";
+
+//TODO try to add sorting in table
 
 class CarList extends React.Component {
     constructor() {
@@ -105,7 +107,7 @@ class CarList extends React.Component {
 function CarFilterBox(props) {
     let content;
     if (props.values.size > 0 || !props.loading)
-        content = props.values.map(item =>
+        content = props.values.sort().map(item =>
             <CarFilterItem key={item} name={item} selected={
                 props.selected.includes(item)
             } setter={props.setter}/>
@@ -113,10 +115,10 @@ function CarFilterBox(props) {
     else
         content = <ProgressBar animated now={100}/>;
     return <Col md={props.size} xs={12}><h4>{props.name}
-    </h4><ButtonGroup className="mb-2">
-        {content/*TODO fix multiple buttons with new line*/}
-
-    </ButtonGroup>
+    </h4>
+        <Row className="no-gutters">
+        {content}
+        </Row>
         <Nav className={"small-nav"}>
             <Nav.Item>
                 <Nav.Link onClick={() => props.setAll(true)}>SELECT ALL</Nav.Link>
@@ -129,7 +131,7 @@ function CarFilterBox(props) {
 }
 
 function CarFilterItem(props) {
-    return <Button key={props.name} variant={props.selected ? "primary" : "secondary"}
+    return <Button  className="m-1" key={props.name} variant={props.selected ? "primary" : "secondary"}
                    onClick={() => props.setter(props.name, !props.selected)}
     >{props.name}</Button>
 }
@@ -140,7 +142,6 @@ class CarTable extends  React.Component{
         this.state={cars:[], loading:true};
     }
     componentDidMount() {
-        //TODO add API call
         API.getCars().then(x=>{this.setState(
             {cars:x, loading:false});
         });
