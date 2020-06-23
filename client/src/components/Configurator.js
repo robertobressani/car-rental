@@ -179,8 +179,8 @@ function AvailableCar(props) {
         return <Alert variant="success">
             <Alert.Heading>We've found a car for you!</Alert.Heading>
             <p>
-                There {props.price_num.available > 1 ? "are" : "is"} {props.price_num.available>1 ? props.price_num.available : "a"}
-                car{props.price_num.available > 1 ? "s" : ""} that satisf{props.price_num.available > 1 ? "y" : "ies"}
+                There {props.price_num.available > 1 ? "are" : "is"} {props.price_num.available>1 ? props.price_num.available+" " : "a "}
+                 car{props.price_num.available > 1 ? "s" : ""} that satisf{props.price_num.available > 1 ? "y " : "ies "}
                 your search, available at <strong>{props.price_num.price.toFixed(2)} €</strong>
             </p>
             <hr/>
@@ -239,13 +239,13 @@ function PaymentForm(props) {
         </Form.Group>
         <Form.Group>
             <Form.Label> Card number</Form.Label>
-            <Form.Control type="tel" placeholder="Your card number" minlength={"8"} maxlength={"19"} pattern="[0-9]+"
+            <Form.Control type="tel" placeholder="Your card number" minLength={"16"} maxLength={"16"} pattern="[0-9]+"
                           name={"number" /*needed for focus of credit card library*/}
                           onFocus={props.focus} onChange={(e) => props.update("number", e.target.value)} required/>
         </Form.Group>
         <Form.Group>
             <Form.Label> CVV</Form.Label>
-            <Form.Control type="tel" placeholder="CVV" minlength={"3"} maxlength={"3"} pattern="[0-9]+"
+            <Form.Control type="tel" placeholder="CVV" minlength={"3"} maxLength={"3"} pattern="[0-9]+"
                           onFocus={props.focus} name="cvc"
                           onChange={(e) => props.update("cvv", e.target.value)} required/>
         </Form.Group>
