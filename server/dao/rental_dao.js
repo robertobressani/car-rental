@@ -27,8 +27,8 @@ const numCarPerCategoryQuery="SELECT COUNT(*) AS cars " +
     "FROM cars " +
     "WHERE category= ? ;";
 
-const rentalsQuery="SELECT *, r.id as rental_id " + //avoids duplicated name
-    "FROM rentals r, cars c  " +
+const rentalsQuery="SELECT * " +
+    "FROM cars c, rentals r  " +
     "WHERE c.id= r.car_id AND  user_id = ? and end_day ";
 
 const insertRentalQuery= "INSERT INTO rentals(user_id, car_id, start_day, end_day, kilometer, unlimited_km, driver_age," +
