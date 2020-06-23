@@ -10,6 +10,7 @@ import Spinner from "react-bootstrap/Spinner";
 import {dateDiff, dateFormat} from "../utils/dateDiff";
 import moment from "moment";
 
+//TODO try to add sorting in table
 //TODO remove delete icon for rentals that have already started
 
 function Rentals() {
@@ -49,7 +50,7 @@ function Rentals() {
 			<Alert.Heading>An error occurred</Alert.Heading>
 			<p>{error}</p>
 		</Alert>
-		<RentalTable name="Your future rentals:" future={true} delete={x=>deleteR(x)} rentals={futureRentals} loading={loading}/>
+		<RentalTable name="Your future and current rentals:" future={true} delete={x=>deleteR(x)} rentals={futureRentals} loading={loading}/>
 		<RentalTable name="Your past rentals:" rentals={pastRentals}/></>;
 }
 
@@ -86,7 +87,7 @@ function RentalTable(props) {
 					<td className="d-none d-sm-table-cell">{x.unlimited? "Unlimited" : x.kilometer}</td>
 					<td className="d-none d-lg-table-cell">{x.insurance ?
 						<img alt="insurance-present" height={20} src={YesLogo}/>: null }</td>
-					<td>{x.car.price.toFixed(2)}</td>
+					<td>{x.car.price.toFixed(2)} €</td>
 					<td className="d-none d-sm-table-cell">{x.car.brand}</td>
 					<td className="d-none d-sm-table-cell">{x.car.model}</td>
 					{props.future ?
