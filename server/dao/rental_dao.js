@@ -87,11 +87,11 @@ async function computePrice(conf, userId) {
             /**
              * query to get number of past rentals of the user
              */
-            db.queryAll(numPastRentalsQuery, [userId, dateUtils.dateFormat(new moment())]),
+            db.queryGet(numPastRentalsQuery, [userId, dateUtils.dateFormat(new moment())]),
             /**
              * query to get number of total cars for the chosen category
              */
-            db.queryAll(numCarPerCategoryQuery, [conf.category])
+            db.queryGet(numCarPerCategoryQuery, [conf.category])
         ]);
 
     if(results[0].total > 0) {
@@ -117,14 +117,13 @@ async function computePrice(conf, userId) {
 
         if(conf.insurance)
             price *= rentalConfig.discounts.get("extra_insurance");
-
         if((results[0].total / results[2].cars) < rentalConfig.availability_threshold)
             price *= rentalConfig.discounts.get("few_cars");
 
         if(results[1].num_rental >= rentalConfig.min_frequent_rentals)
             price *= rentalConfig.discounts.get("frequent_customer");
 
-        return {price: price, available: results[0].total}
+        return {price: +(price.toFixed(2)), available: results[0].total}
     }
     // no available cars
     return {price: -1, available: 0};
