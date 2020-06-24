@@ -158,7 +158,7 @@ function ConfiguratorForm(props) {
             <Form.Label>Age of driver: </Form.Label>
             <Form.Control type="number" defaultValue={props.configuration.age}
                           onChange={(event) => props.updateValue("age", +event.target.value)}
-                          min={18}/>
+                          min={18} max={99}/>
         </Form.Group>
         <Form.Group className="col-6 col-md-2">
             <Form.Label> Extra drivers: </Form.Label>
