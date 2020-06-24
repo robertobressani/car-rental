@@ -23,10 +23,17 @@ function Rentals() {
 
 	function deleteR(x) {
 		setLoading([...loading, x]);
-		API.deleteRental(x).then(()=>{
-			setFuture([...futureRentals].filter(rental=>rental.id!==x));
-		}).catch(()=>setError(`Impossible to delete car rental number ${x}`))
-			.finally(()=>setLoading([...loading].filter(load=>load!==x)));
+		API.deleteRental(x).then((res)=>{
+			if(res)
+				setFuture([...futureRentals].filter(rental=>rental.id!==x));
+			else
+				setError(`Impossible to delete car rental number ${x}`);
+		}).catch(()=>
+			//should not come hear, unless network error
+			setError(`Impossible to delete car rental number ${x}`))
+		.finally(()=>
+			//removing infinite looping (if network error) spinner
+			setLoading([...loading].filter(load=>load!==x)));
 	}
 
 	useEffect(() => {
