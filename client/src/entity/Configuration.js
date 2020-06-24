@@ -20,14 +20,14 @@ export default  class Configuration{
         today.second(0)
         today.millisecond(0);
         return this.isCompleted() &&  dateDiff(this.start, today) > 0
-            && dateDiff(this.end, this.start) >= 0;
+            && dateDiff(this.end, this.start) >= 0 && this.age >=18 && this.age<100 ;
 
     }
 
     isCompleted() {
         return  this.start && this.start.isValid()
             && this.end   && this.end.isValid()  && ["A", "B", "C", "D", "E", "F"].includes(this.category)
-            && (this.unlimited || this.kilometer > 0) && this.age >0 && this.extra_drivers >= 0;
+            && (this.unlimited || this.kilometer > 0) &&  this.extra_drivers >= 0;
 
     }
 }
