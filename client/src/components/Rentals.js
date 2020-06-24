@@ -3,7 +3,7 @@ import AuthenticationContext from "./AuthenticationContext.js";
 import {Redirect} from "react-router-dom";
 import {Jumbotron, ProgressBar, Table, Alert} from "react-bootstrap";
 import API from '../api/API.js';
-//TODO change delete icon
+import DisabledDeleteIco from './img/empty_cancel.svg'
 import DeleteIco from './img/eraser.svg';
 import YesLogo from './img/tick.svg';
 import Spinner from "react-bootstrap/Spinner";
@@ -11,7 +11,6 @@ import {dateDiff, dateFormat} from "../utils/dateDiff";
 import moment from "moment";
 
 //TODO try to add sorting in table
-//TODO remove delete icon for rentals that have already started
 
 function Rentals() {
 	const value = useContext(AuthenticationContext);
@@ -38,7 +37,7 @@ function Rentals() {
 		//TODO add error handling
 		API.getRentals(true).then(x => {
 			setPast(x);
-			setLoadPast(x);
+			setLoadPast(true);
 		})
 	}, [])
 	if (!value.verifiedLogin || !(loadFuture && loadPast))
@@ -94,9 +93,11 @@ function RentalTable(props) {
 						<td>{
 							dateDiff(x.start, moment())>0 ?
 								(props.loading.includes(x.id) ?
-									<Spinner animation="border" size="sm" /> :<img alt="delete" height={20} src={DeleteIco}
-																								onClick={()=>props.delete(x.id)}/> )
-							: null //TODO add tooltip saying the rental cannot be deleted if started
+									<Spinner animation="border" size="sm" /> :
+										<img alt="delete" height={20} src={DeleteIco} onClick={()=>props.delete(x.id)}
+											 data-toggle="tooltip" data-placement="top" title="Delete this rental"/>)
+							: <img alt="impossible to delete" height={18} src={DisabledDeleteIco} data-toggle="tooltip"
+								   data-placement="top" title="You cannot delete a rental that has already started"/>
 						}</td> :null}
 				</tr>
 			})}
