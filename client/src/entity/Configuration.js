@@ -21,7 +21,14 @@ export default  class Configuration{
         today.millisecond(0);
         return this.start && this.start.isValid() && dateDiff(this.start, today) > 0
             && this.end   && this.end.isValid() && dateDiff(this.end, this.start) >= 0 && ["A", "B", "C", "D", "E", "F"].includes(this.category)
-            && (this.unlimited || this.kilometer > 0) && this.age >= 18 && +this.extra_drivers >= 0; //check whether it's integer
+            && (this.unlimited || this.kilometer > 0) && this.age >= 18 && this.extra_drivers >= 0;
+
+    }
+
+    isCompleted() {
+        return  this.start && this.start.isValid()
+            && this.end   && this.end.isValid()  && ["A", "B", "C", "D", "E", "F"].includes(this.category)
+            && (this.unlimited || this.kilometer > 0) && this.age >0 && this.extra_drivers >= 0;
 
     }
 }
