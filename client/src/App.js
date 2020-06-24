@@ -19,9 +19,17 @@ class App extends React.Component {
     componentDidMount() {
         //at app load checks if the user is logged in
         API.checkAuthentication().then(
-            (username) => this.setState({loggedIn: true, verifiedLogin: true, userName: username})
+            (username) =>{
+                if(username)
+                    //the user is already logged
+                    this.setState({loggedIn: true, verifiedLogin: true, userName: username});
+                else
+                    //no log in found
+                    this.setState({verifiedLogin: true});
+            }
         ).catch(
             //set the flag to indicate that authentication check has been performed
+            // (some error occurs, considering him as not logged)
             ()=>this.setState({verifiedLogin: true})
         )
     }
