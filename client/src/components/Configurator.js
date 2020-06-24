@@ -8,6 +8,7 @@ import AuthenticationContext from './AuthenticationContext.js';
 import moment from 'moment';
 import Configuration from '../entity/Configuration.js';
 import API from "../api/API";
+import {dateFormat} from "../utils/dateDiff";
 
 //TODO pass to server date and not moment
 
@@ -19,6 +20,7 @@ class Configurator extends React.Component {
             configuration: new Configuration(), price_num: {price: -1, available: -1},
             creditCard: {cvv: "", focused: "", name: "", number: ""}
         }
+        this.form = React.createRef();
     }
 
     /**
@@ -26,21 +28,26 @@ class Configurator extends React.Component {
      */
     componentDidUpdate() {
         //loading of new data must be performed only when a submission hasn't been already done
-        if (!this.state.submitted && this.state.configuration.isValid()) {
-            console.log("that's the right time to update");
+        if (!this.state.submitted) {
+
+            if (this.state.configuration.isValid()) {
+                console.log("that's the right time to update");
 
 
-            this.setState({submitted: true, loading:true});
-            let configuration = Object.assign(new Configuration(), {...this.state.configuration});
-            if (configuration.unlimited)
-                //make no sense have kilometers per day set to a number
-                configuration.kilometer = 0;
+                this.setState({submitted: true, loading: true});
+                let configuration = Object.assign(new Configuration(), {...this.state.configuration});
+                if (configuration.unlimited)
+                    //make no sense have kilometers per day set to a number
+                    configuration.kilometer = 0;
 
-            //TODO add validation messages
-            //TODO add error checking
-            API.searchConfig(configuration).then(result=>this.setState({price_num: result, loading: false}));
+                //TODO add error checking
+                API.searchConfig(configuration).then(result => this.setState({price_num: result, loading: false}));
 
 
+            } else if(this.state.configuration.isCompleted()){
+                //Prompting errors through form validation of HTML if all fields are filled in, but configuration is not valid
+                this.form.current.reportValidity();
+            }
         }
     }
 
@@ -49,13 +56,16 @@ class Configurator extends React.Component {
         this.setState((state) => {
             let configuration = Object.assign(new Configuration(), {...state.configuration});
 
-            configuration[name]=value;
+            configuration[name] = value;
             if (name === "kilometer")
                 configuration.unlimited = +value === 150;
-            else if(name==="unlimited" )
-                configuration.kilometer= value ? 150 : 149;
+            else if (name === "unlimited")
+                configuration.kilometer = value ? 150 : 149;
             //setting submitted= false, so that a new load can be performed if valid
-            return {configuration: configuration, submitted: false};
+            if(configuration.isValid())
+                return {configuration: configuration, submitted: false};
+            //deleting current result
+            return {configuration: configuration, submitted: false, price_num: {price: -1, available: -1}};
         });
     }
 
@@ -71,16 +81,16 @@ class Configurator extends React.Component {
         this.updateCardValue("focused", e.target.name);
     }
 
-    checkPayment=(e)=> {
+    checkPayment = (e) => {
         e.preventDefault();
         if (e.target.checkValidity()) {
             console.log("form is valid");
             //TODO add error management
-            let creditCard={...this.state.creditCard};
+            let creditCard = {...this.state.creditCard};
             delete creditCard['focused'];
             API.saveRental(this.state.configuration, creditCard, this.state.price_num.price).then(r => {
-                if(r)
-                    this.setState({completed:true});
+                if (r)
+                    this.setState({completed: true});
             });
 
         }
@@ -93,10 +103,10 @@ class Configurator extends React.Component {
                 return <Jumbotron className="jumbotron-space"><ProgressBar animated now={100}/></Jumbotron>;
             if (!value.loggedIn)
                 return <Redirect to={"/login"}/>;
-            if(this.state.completed)
+            if (this.state.completed)
                 return <Redirect to={"/rentals"}/>;
             return <><Jumbotron className=" jumbotron-space">
-                <ConfiguratorForm updateValue={(name, value) => this.updateConfigurationValue(name, value)}
+                <ConfiguratorForm formRef={this.form} updateValue={(name, value) => this.updateConfigurationValue(name, value)}
                                   configuration={this.state.configuration}/>
             </Jumbotron>
                 {this.state.submitted ?
@@ -119,23 +129,23 @@ class Configurator extends React.Component {
 }
 
 function ConfiguratorForm(props) {
-    return <Form className="row ">
+    return <Form className="row " ref={props.formRef}>
         <Form.Group className="col-12 col-md-4">
             <Form.Label>Start date of rental:</Form.Label>
-            <Form.Control type="date" defaultValue={props.configuration.start ?
-                props.configuration.start.format("yyyy-MM-DD") : null}
-                          onChange={(event) => props.updateValue("start", moment(event.target.value))}/>
+            <Form.Control type="date" defaultValue={dateFormat(props.configuration.start)}
+                          onChange={(event) => props.updateValue("start", moment(event.target.value))}
+                          required min={dateFormat(moment().add(1,'days'))}/>
         </Form.Group>
         <Form.Group className="col-12 col-md-4">
             <Form.Label>End date of rental:</Form.Label>
-            <Form.Control type="date" defaultValue={props.configuration.end ?
-                props.configuration.end.format("yyyy-MM-DD") : null}
+            <Form.Control type="date" defaultValue={
+                dateFormat(props.configuration.end)} required min={dateFormat(props.configuration.start) || dateFormat(moment().add(1,'days'))}
                           onChange={(event) => props.updateValue("end", moment(event.target.value))}/>
         </Form.Group>
         <Form.Group className="col-12 col-md-4">
             <Form.Label> Category: </Form.Label>
             <Form.Control as="select" defaultValue={props.configuration.category}
-                          onChange={(event) => props.updateValue("category", event.target.value)}>
+                          onChange={(event) => props.updateValue("category", event.target.value)} required>
                 <option/>
                 <option>A</option>
                 <option>B</option>
@@ -158,7 +168,7 @@ function ConfiguratorForm(props) {
         <Form.Group className="col-12 col-md-4">
             <Form.Label>Kilometers per day : {props.configuration.unlimited ?
                 "unlimited" : props.configuration.kilometer}</Form.Label>
-            <Form.Control type="range" min={0} max={150} value={props.configuration.kilometer}
+            <Form.Control type="range" min={1} max={150} value={props.configuration.kilometer}
                           onChange={(event) => props.updateValue("kilometer", event.target.value)}
                           disabled={props.configuration.unlimited}/>
             <Form.Check label="Unlimited" checked={props.configuration.unlimited}
@@ -179,8 +189,8 @@ function AvailableCar(props) {
         return <Alert variant="success">
             <Alert.Heading>We've found a car for you!</Alert.Heading>
             <p>
-                There {props.price_num.available > 1 ? "are" : "is"} {props.price_num.available>1 ? props.price_num.available+" " : "a "}
-                 car{props.price_num.available > 1 ? "s" : ""} that satisf{props.price_num.available > 1 ? "y " : "ies "}
+                There {props.price_num.available > 1 ? "are" : "is"} {props.price_num.available > 1 ? props.price_num.available + " " : "a "}
+                car{props.price_num.available > 1 ? "s" : ""} that satisf{props.price_num.available > 1 ? "y " : "ies "}
                 your search, available at <strong>{props.price_num.price.toFixed(2)} €</strong>
             </p>
             <hr/>
