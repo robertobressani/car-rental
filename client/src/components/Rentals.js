@@ -9,6 +9,7 @@ import YesLogo from './img/tick.svg';
 import Spinner from "react-bootstrap/Spinner";
 import {dateDiff, dateFormat} from "../utils/dateDiff";
 import moment from "moment";
+import {getEuro} from "../utils/currency";
 
 //TODO try to add sorting in table
 
@@ -93,7 +94,7 @@ function RentalTable(props) {
 					<td className="d-none d-sm-table-cell">{x.unlimited? "Unlimited" : x.kilometer}</td>
 					<td className="d-none d-lg-table-cell">{x.insurance ?
 						<img alt="insurance-present" height={20} src={YesLogo}/>: null }</td>
-					<td>{x.car.price.toFixed(2)} €</td>
+					<td>{getEuro(x.car.price)}</td>
 					<td className="d-none d-sm-table-cell">{x.car.brand}</td>
 					<td className="d-none d-sm-table-cell">{x.car.model}</td>
 					{props.future ?

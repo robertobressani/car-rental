@@ -9,6 +9,7 @@ import moment from 'moment';
 import Configuration from '../entity/Configuration.js';
 import API from "../api/API";
 import {dateFormat} from "../utils/dateDiff";
+import {getEuro} from "../utils/currency";
 
 //TODO pass to server date and not moment
 
@@ -191,7 +192,7 @@ function AvailableCar(props) {
             <p>
                 There {props.price_num.available > 1 ? "are" : "is"} {props.price_num.available > 1 ? props.price_num.available + " " : "a "}
                 car{props.price_num.available > 1 ? "s" : ""} that satisf{props.price_num.available > 1 ? "y " : "ies "}
-                your search, available at <strong>{props.price_num.price.toFixed(2)} €</strong>
+                your search, available at <strong>{getEuro(props.price_num.price)} </strong>
             </p>
             <hr/>
             <div className="d-flex justify-content-end">

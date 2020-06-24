@@ -1,8 +1,10 @@
 import React from 'react';
 import {Button, Row, Jumbotron, Nav, ProgressBar, Col, Table} from 'react-bootstrap';
 import API from "../api/API";
+import {getEuro} from "../utils/currency";
 
 //TODO try to add sorting in table
+//TODO when no filter selected, show all cars
 
 class CarList extends React.Component {
     constructor() {
@@ -167,7 +169,7 @@ class CarTable extends  React.Component{
                     <td>{x.brand}</td>
                     <td>{x.model}</td>
                     <td>{x.category}</td>
-                    <td>{x.price.toFixed(2)+ " €"}</td></tr>;
+                    <td>{getEuro(x.price)}</td></tr>;
             })}
             </tbody>
         </Table>
