@@ -170,7 +170,6 @@ app.post(`${BASE_URL}pay`,[check('credit_card.name').isLength({min:5}),
  * @return none, only status code
  */
 app.post(`${BASE_URL}rentals`, [check('amount').isFloat(), check('receipt').isInt()], (req,res)=>{
-    console.log(req.body);
     const conf = Configuration.of(req.body.configuration);
     if(!conf.isValid() || !validationResult(req).isEmpty()){
         res.status(400).end();
@@ -180,6 +179,7 @@ app.post(`${BASE_URL}rentals`, [check('amount').isFloat(), check('receipt').isIn
                 res.status(200).end()
             })
             .catch(() => res.status(500).end())
+            //TODO check unhandled error that sometimes occurs
     }
 });
 
@@ -199,5 +199,5 @@ app.delete(`${BASE_URL}rentals/:rentalId`, [check('rentalId').isInt()], (req, re
 
 });
 
-
+//TODO authentication error when token is not found
 app.listen(PORT, ()=>console.log(`Server running on http://localhost:${PORT}/`));
