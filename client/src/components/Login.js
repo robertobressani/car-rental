@@ -39,7 +39,7 @@ class LoginForm extends React.Component {
                         console.log("Submitting");
                         this.setState({submitted:true});
                         this.props.login(this.state.email, this.state.password)
-                            .catch(err=>this.setState({submitted:false, error:err.err}));
+                            .catch(err=>this.setState({submitted:false, error:err.msg}));
                         //if everything fine login flag will be set and it will be redirect to /configurator
                     }
                 }}>
