@@ -55,13 +55,14 @@ function Header() {
 
 function NavigationPanel(props) {
     const content=<><Nav.Item> {/*href is put to make collapseOnSelect functionalities working*/}
-        <Nav.Link as={NavLink}  activeClassName="bg-white" className="bg-grey text-dark" href="/cars" to="/cars">All cars  </Nav.Link>
+        <Nav.Link as={NavLink}  activeClassName="bg-white" className="bg-grey text-dark"  to="/cars">All cars  </Nav.Link>
     </Nav.Item>
     <Nav.Item>
-        <Nav.Link as={NavLink}  activeClassName="bg-white" className="bg-grey text-dark" href="/configurator" to="/configurator">Rental configurator  </Nav.Link>
+        {/*TODO fix active nav link while redirecting from /configurator to /rentals*/ }
+        <Nav.Link as={NavLink}  activeClassName="bg-white" className="bg-grey text-dark"  to="/configurator">Rental configurator  </Nav.Link>
     </Nav.Item>
     <Nav.Item>
-        <Nav.Link as={NavLink}  activeClassName="bg-white" className="bg-grey text-dark" href="/rentals" to="/rentals">List of all rentals </Nav.Link>
+        <Nav.Link as={NavLink}  activeClassName="bg-white" className="bg-grey text-dark"  to="/rentals">List of all rentals </Nav.Link>
     </Nav.Item></>;
     if (props.show && !props.mobile)
         //user is logged in, navigation panel should be shown
