@@ -24,7 +24,7 @@ function Header() {
     else
         button = <Link to="/login"><Button variant="success">{"Login"} </Button></Link>;
     return <>
-        <Navbar  collapseOnSelect bg="dark" expand="md" variant="dark" className="row justify-content-between">
+        <Navbar  collapseOnSelect bg="dark" expand="md" variant="dark" className="row justify-content-between" sticky="top">
             <Col md={0} xs={1} className=" d-md-none">
                 <Navbar.Toggle   aria-controls="nav-panel" />
             </Col>
@@ -66,10 +66,11 @@ function NavigationPanel(props) {
     </Nav.Item></>;
     if (props.show && !props.mobile)
         //user is logged in, navigation panel should be shown
-        return <Nav variant="tabs"  className="d-none d-md-flex ">
+        return <Nav variant="tabs"  className="d-none d-md-flex " >
             {content}
         </Nav>;
     else if(props.show && props.mobile)
+        //TODO see findDOMnode warning
         return <Navbar.Collapse  >
             <Nav className={"d-inline d-md-none col-12"} id="nav-panel">
                 {content}
