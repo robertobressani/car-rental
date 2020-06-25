@@ -1,15 +1,15 @@
 const express = require('express');
 const morgan = require('morgan');
 const jsonwebtoken = require('jsonwebtoken');
-const jwt=require('express-jwt');
+const jwt = require('express-jwt');
 const cookieParser = require('cookie-parser');
 const {check, validationResult} = require('express-validator');
 
-const serverConf =require('./config/server_conf');
+const serverConf = require('./config/server_conf');
 const Configuration = require('./entity/Configuration');
 
-const carDao= require('./dao/car_dao');
-const rentalDao= require('./dao/rental_dao');
+const carDao = require('./dao/car_dao');
+const rentalDao = require('./dao/rental_dao');
 const userDao = require("./dao/user_dao");
 
 const expireTime = serverConf.expireSec; //seconds
@@ -33,11 +33,11 @@ app.use(cookieParser());
  * @param NONE
  * @return the list of all cars
  */
-app.get(BASE_URL+"cars",(req, res)=>{
+app.get(BASE_URL + "cars", (req, res) => {
 
-    carDao.getCar().then(cars=>res.json(cars)).catch((err) => {
+    carDao.getCar().then(cars => res.json(cars)).catch((err) => {
         res.status(500).json({
-            errors: [{ msg: err}],
+            errors: [{msg: err}],
         });
     });
 });
@@ -47,11 +47,11 @@ app.get(BASE_URL+"cars",(req, res)=>{
  * @param NONE
  * @return the list of all brands
  */
-app.get(BASE_URL+"brands",(req, res)=>{
+app.get(BASE_URL + "brands", (req, res) => {
 
-    carDao.getBrands().then(cars=>res.json(cars)).catch((err) => {
+    carDao.getBrands().then(cars => res.json(cars)).catch((err) => {
         res.status(500).json({
-            errors: [{ msg: err}],
+            errors: [{msg: err}],
         });
     });
 });
@@ -62,25 +62,25 @@ app.get(BASE_URL+"brands",(req, res)=>{
  * @param POST with email and password
  * @return the username
  */
-app.post(BASE_URL+"login", (req, res)=>{
+app.post(BASE_URL + "login", (req, res) => {
     const email = req.body.email;
     const password = req.body.password;
 
     userDao.checkEmailPassword(email, password)
-        .then(user=> {
+        .then(user => {
             //AUTHENTICATION SUCCESS
-            const token = jsonwebtoken.sign({ user: user.id }, jwtSecret, {expiresIn: expireTime});
-            res.cookie('token', token, { httpOnly: true, sameSite: true, maxAge: 1000*expireTime });
+            const token = jsonwebtoken.sign({user: user.id}, jwtSecret, {expiresIn: expireTime});
+            res.cookie('token', token, {httpOnly: true, sameSite: true, maxAge: 1000 * expireTime});
             res.json(user.user)
-        }).catch((err)=>{
-            if(err)
-                //Something wrong in the call
-                res.status(500).end();
-            else
-                //Wrong email or password
-                //(for security reason the error code doesn't specify whether email or password is wrong)
-                res.status(401).end();
-        });
+        }).catch((err) => {
+        if (err)
+            //Something wrong in the call
+            res.status(500).end();
+        else
+            //Wrong email or password
+            //(for security reason the error code doesn't specify whether email or password is wrong)
+            res.status(401).end();
+    });
 });
 
 /**
@@ -92,9 +92,9 @@ app.get(`${BASE_URL}login`, jwt({
         secret: jwtSecret,
         getToken: req => req.cookies.token,
         credentialsRequired: false,
-    }), (req, res)=>{
-        if(req.user && req.user.user)
-            userDao.getUserName(req.user.user).then(user=> res.status(200).json(user));
+    }), (req, res) => {
+        if (req.user && req.user.user)
+            userDao.getUserName(req.user.user).then(user => res.status(200).json(user));
         else
             res.status(401).end();
     }
@@ -124,23 +124,29 @@ app.post(`${BASE_URL}logout`, (req, res) => {
  * @param the configuratio object
  * @return {price: ... , available: ...}
  */
-app.get(`${BASE_URL}configuration`, (req, res)=>{
+app.get(`${BASE_URL}configuration`, (req, res) => {
     const conf = Configuration.of(req.query);
-    //TODO add error handling
-   if(!conf.isValid()){}
 
-   rentalDao.searchRental(conf, req.user.user)
-       .then(searchResult => res.json(searchResult));
+    if (!conf.isValid()) {
+        res.status(400).end();
+        return;
+    }
+
+    rentalDao.searchRental(conf, req.user.user)
+        .then(searchResult => res.json(searchResult));
 });
 /**
  * REST API for getting the list of rentals
  * @param ended: boolean to indicate future or past rentals
  * @returns JSON list of rentals
  */
-app.get(`${BASE_URL}rentals`, (req, res)=>{
-    //TODO add bad req
+app.get(`${BASE_URL}rentals`, (req, res) => {
+    if (!req.query.ended) {
+        res.status(400).end();
+        return;
+    }
     rentalDao.getRentals(JSON.parse(req.query.ended), req.user.user)
-        .then(rentals=>res.json(rentals))
+        .then(rentals => res.json(rentals)).catch(() => res.status(500).end());
 });
 
 /**
@@ -149,16 +155,16 @@ app.get(`${BASE_URL}rentals`, (req, res)=>{
  * @param amount to pay
  * @returns a fake payment code
  */
-app.post(`${BASE_URL}pay`,[check('credit_card.name').isLength({min:5}),
-       //check('credit_card.number').isCreditCard(), //TODO see if is a good idea to use isCreditCard()
-       check('credit_card.number').matches("[0-9]{16}"),
-       check('credit_card.cvv').isLength({min:3, max:3}).matches("[0-9]+"),
-       check('amount').isFloat()], (req, res)=>{
-        if(!validationResult(req).isEmpty())
-            //sending fake payment receipt code
-            res.status(400).end();
-        else
-            res.json({receipt: Math.floor(Math.random()*999999)});
+app.post(`${BASE_URL}pay`, [check('credit_card.name').isLength({min: 5}),
+    //check('credit_card.number').isCreditCard(), //TODO see if is a good idea to use isCreditCard()
+    check('credit_card.number').matches("[0-9]{16}"),
+    check('credit_card.cvv').isLength({min: 3, max: 3}).matches("[0-9]+"),
+    check('amount').isFloat()], (req, res) => {
+    if (!validationResult(req).isEmpty())
+        //sending fake payment receipt code
+        res.status(400).end();
+    else
+        res.json({receipt: Math.floor(Math.random() * 999999)});
 
 });
 
@@ -169,17 +175,20 @@ app.post(`${BASE_URL}pay`,[check('credit_card.name').isLength({min:5}),
  * @param receipt: payment code
  * @return none, only status code
  */
-app.post(`${BASE_URL}rentals`, [check('amount').isFloat(), check('receipt').isInt()], (req,res)=>{
+app.post(`${BASE_URL}rentals`, [check('amount').isFloat(), check('receipt').isInt()], (req, res) => {
     const conf = Configuration.of(req.body.configuration);
-    if(!conf.isValid() || !validationResult(req).isEmpty()){
+    if (!conf.isValid() || !validationResult(req).isEmpty()) {
         res.status(400).end();
-    }else {
+    } else {
         rentalDao.addRental(conf, req.body.amount, req.user.user)
             .then(() => {
                 res.status(200).end()
             })
-            .catch(() => res.status(500).end())
-            //TODO check unhandled error that sometimes occurs
+            .catch((err) => {
+                console.log(err);
+                res.status(500).end()
+            })
+        //TODO check unhandled error that sometimes occurs
     }
 });
 
@@ -188,16 +197,15 @@ app.post(`${BASE_URL}rentals`, [check('amount').isFloat(), check('receipt').isIn
  * @param rentalID of the rental to delete
  * @return 400 or 200 as status code
  */
-app.delete(`${BASE_URL}rentals/:rentalId`, [check('rentalId').isInt()], (req, res)=>{
-    if( !validationResult(req).isEmpty())
+app.delete(`${BASE_URL}rentals/:rentalId`, [check('rentalId').isInt()], (req, res) => {
+    if (!validationResult(req).isEmpty())
         res.status(400).end();
     else
         rentalDao.deleteRental(req.user.user, +req.params.rentalId)
-            .then((result)=>res.status(result? 200 : 400).end());
-
+            .then((result) => res.status(result ? 200 : 400).end());
 
 
 });
 
-//TODO authentication error when token is not found
-app.listen(PORT, ()=>console.log(`Server running on http://localhost:${PORT}/`));
+
+app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}/`));
