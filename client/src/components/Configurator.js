@@ -188,7 +188,7 @@ function AvailableCar(props) {
         return <ProgressBar animated now={100}/>
     else if (props.price_num.available > 0)
         return <Alert variant="success">
-            <Alert.Heading>We've found a car for you!</Alert.Heading>
+            <Alert.Heading>We've found {props.price_num.available > 1 ? props.price_num.available + " " : "a "} car{props.price_num.available > 1 ? "s" : ""} for you!</Alert.Heading>
             <p>
                 There {props.price_num.available > 1 ? "are" : "is"} {props.price_num.available > 1 ? props.price_num.available + " " : "a "}
                 car{props.price_num.available > 1 ? "s" : ""} that satisf{props.price_num.available > 1 ? "y " : "ies "}
