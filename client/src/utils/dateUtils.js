@@ -7,5 +7,5 @@ export  function dateDiff(end, start){
 export function dateFormat(date){
     if(date.isValid())
         return date.format("yyyy-MM-DD");
-    return false;
+    return null;
 }

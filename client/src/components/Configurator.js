@@ -42,7 +42,6 @@ class Configurator extends React.Component {
                     //make no sense have kilometers per day set to a number
                     configuration.kilometer = 0;
 
-                //TODO add error checking
                 API.searchConfig(configuration).then(result => {
                     if(result)
                         this.setState({price_num: result})
@@ -57,15 +56,16 @@ class Configurator extends React.Component {
                 }).finally(()=>this.setState({loading:false}));
 
 
-            } else if(this.state.configuration.isCompleted()){
-                //Prompting errors through form validation of HTML if all fields are filled in, but configuration is not valid
+            } else if(this.state.configuration.isCompleted() || this.state.price_num){
+                //Prompting errors through form validation of HTML if all fields are filled in or a result has been obtained
+                // but configuration is not valid
                 this.form.current.reportValidity();
             }
         }
     }
 
     updateConfigurationValue(name, value) {
-        console.log("called with:" + value);
+        // console.log("called with:" + value);
         this.setState((state) => {
             let configuration = Object.assign(new Configuration(), {...state.configuration});
 
@@ -78,7 +78,7 @@ class Configurator extends React.Component {
             if(configuration.isValid())
                 return {configuration: configuration, submitted: false};
             //deleting current result
-            return {configuration: configuration, submitted: false, price_num: false};
+            return {configuration: configuration, submitted: false};
         });
     }
 
@@ -122,7 +122,8 @@ class Configurator extends React.Component {
             if (this.state.completed)
                 return <Redirect to={"/rentals"}/>;
             return <><Jumbotron className=" jumbotron-space">
-                <ConfiguratorForm formRef={this.form} updateValue={(name, value) => this.updateConfigurationValue(name, value)}
+                <ConfiguratorForm formRef={this.form} updateValue={(name, value) =>
+                                        this.updateConfigurationValue(name, value)}
                                   configuration={this.state.configuration}/>
             </Jumbotron>
                 {(this.state.submitted  && this.state.price_num)|| this.state.error ?
