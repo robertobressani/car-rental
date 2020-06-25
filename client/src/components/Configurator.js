@@ -18,8 +18,9 @@ class Configurator extends React.Component {
         super(props);
         this.state = {
             submitted: false, loading: false, completed:false,
-            configuration: new Configuration(), price_num: {price: -1, available: -1},
-            creditCard: {cvv: "", focused: "", name: "", number: ""}
+            configuration: new Configuration(), price_num: false,
+            creditCard: {cvv: "", focused: "", name: "", number: ""},
+            error: false
         }
         this.form = React.createRef();
     }
@@ -32,7 +33,7 @@ class Configurator extends React.Component {
         if (!this.state.submitted) {
 
             if (this.state.configuration.isValid()) {
-                console.log("that's the right time to update");
+                //console.log("that's the right time to update");
 
 
                 this.setState({submitted: true, loading: true});
@@ -42,10 +43,18 @@ class Configurator extends React.Component {
                     configuration.kilometer = 0;
 
                 //TODO add error checking
-                API.searchConfig(configuration).then(result => this.setState({price_num: result, loading: false})).catch(err=>{
+                API.searchConfig(configuration).then(result => {
+                    if(result)
+                        this.setState({price_num: result})
+                    else
+                        this.setState({error: "Impossible to perform the search, please retry"});
+                }).catch(err=>{
                     if(err===401)
                         this.props.unLog();
-                });
+                    else {
+                        this.setState({error: err.msg});
+                    }
+                }).finally(()=>this.setState({loading:false}));
 
 
             } else if(this.state.configuration.isCompleted()){
@@ -69,7 +78,7 @@ class Configurator extends React.Component {
             if(configuration.isValid())
                 return {configuration: configuration, submitted: false};
             //deleting current result
-            return {configuration: configuration, submitted: false, price_num: {price: -1, available: -1}};
+            return {configuration: configuration, submitted: false, price_num: false};
         });
     }
 
@@ -116,8 +125,10 @@ class Configurator extends React.Component {
                 <ConfiguratorForm formRef={this.form} updateValue={(name, value) => this.updateConfigurationValue(name, value)}
                                   configuration={this.state.configuration}/>
             </Jumbotron>
-                {this.state.submitted ?
-                    <AvailableCar loading={this.state.loading} price_num={this.state.price_num}/> : <></>
+                {(this.state.submitted  && this.state.price_num)|| this.state.error ?
+                    <AvailableCar loading={this.state.loading}
+                                  cancelError={()=>this.setState({error:false})}
+                                  error={this.state.error} price_num={this.state.price_num}/> : <></>
                 }
                 <Route exact path="/configurator/pay">
                     <PaymentDialog card={this.state.creditCard} updateFocus={(e) => this.updateFocusCard(e)}
@@ -190,7 +201,12 @@ function ConfiguratorForm(props) {
 }
 
 function AvailableCar(props) {
-    if (props.loading)
+    if(props.error)
+        return <Alert variant="danger" dismissible onClose={props.cancelError}>
+            <Alert.Heading>An error occurred</Alert.Heading>
+            <p>{props.error}</p>
+    </Alert>;
+    else if (props.loading)
         return <ProgressBar animated now={100}/>
     else if (props.price_num.available > 0)
         return <Alert variant="success">
