@@ -12,7 +12,7 @@ class CarList extends React.Component {
         this.state = {
             loading: true,
             categories: ["A", "B", "C", "D", "E"],
-            selectedCategories: ["A", "B", "C", "D", "E"],
+            selectedCategories: [],
             brands: [],
             selectedBrands: []
         };
@@ -23,9 +23,8 @@ class CarList extends React.Component {
      */
     componentDidMount() {
         //TODO error handling
-       API.getBrands().then(result =>
-            this.setState({ brands: result, selectedBrands: result,  loading: false})
-        ).catch(error => this.setState({error: error}));
+       API.getBrands().then(result => this.setState({brands: result, loading: false}))
+           .catch(error => this.setState({error: error}));
 
     }
 
@@ -163,7 +162,8 @@ class CarTable extends  React.Component{
             </tr>
             </thead>
             <tbody>
-            {this.state.cars.filter(x=>new Set(this.props.brands).has(x.brand) && new Set(this.props.categories).has(x.category)).map(x=>{
+            {this.state.cars.filter(x=> (!this.props.brands.length ||this.props.brands.includes(x.brand))
+                && (!this.props.categories.length || this.props.categories.includes(x.category))).map(x=>{
                 return <tr key={x.id}>
                     <td>{x.id}</td>
                     <td>{x.brand}</td>
