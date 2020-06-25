@@ -70,14 +70,17 @@ async function getRentals(ended){
         console.log(result.map(x=>Rental.of(x)));
         return result.map(x=>Rental.of(x));
     }
+    if(response.status===401)
+        throw 401;
     throw errorRentals;
 }
 
 async function deleteRental(x) {
-    //TODO change error handling at upper level
     const response  = await fetch(`${BASE_URL}/rentals/${x}`,{
         method: 'DELETE'
     });
+    if(response.status===401)
+        throw 401;
     return response.ok;
 }
 
@@ -86,6 +89,8 @@ async function searchConfig(configuration){
     const response  = await fetch(`${BASE_URL}/configuration?${query}`);
     if(response.ok && response.status === 200)
         return await response.json();
+    if(response.status===401)
+        throw 401;
     return false;
 }
 
@@ -112,6 +117,8 @@ async function saveRental(configuration, creditCard, price) {
         if(reservation_res.ok)
             return true;
     }
+    if(payment_res.status===401)
+        throw 401;
      return false;
 }
 
