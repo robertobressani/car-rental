@@ -8,7 +8,7 @@ import AuthenticationContext from './AuthenticationContext.js';
 import moment from 'moment';
 import Configuration from '../entity/Configuration.js';
 import API from "../api/API";
-import {dateFormat} from "../utils/dateDiff";
+import {dateFormat} from "../utils/dateUtils";
 import {getEuro} from "../utils/currency";
 
 //TODO pass to server date and not moment

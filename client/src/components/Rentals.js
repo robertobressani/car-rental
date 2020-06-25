@@ -7,7 +7,7 @@ import DisabledDeleteIco from './img/empty_cancel.svg'
 import DeleteIco from './img/eraser.svg';
 import YesLogo from './img/tick.svg';
 import Spinner from "react-bootstrap/Spinner";
-import {dateDiff, dateFormat} from "../utils/dateDiff";
+import {dateDiff, dateFormat} from "../utils/dateUtils";
 import moment from "moment";
 import {getEuro} from "../utils/currency";
 

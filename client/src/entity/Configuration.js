@@ -1,5 +1,5 @@
 import moment from "moment";
-import {dateDiff} from "../utils/dateDiff";
+import {dateDiff} from "../utils/dateUtils";
 
 export default  class Configuration{
     constructor(start="", end="", category="", kilometer=0, unlimited=false, age=18, extra_drivers=0, insurance=false) {
