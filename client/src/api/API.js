@@ -14,20 +14,22 @@ const errorRentals={msg: "Unable to load rentals' list, please try again"};
 
 async function getCars(){
     const response = await fetch(`${BASE_URL}cars`);
-    const jsonCars = await response.json();
+
     if(!response.ok) {
        throw errorCars;
     }
+    const jsonCars = await response.json();
     return  jsonCars.map(json=>Car.of(json));
 }
 
 async function getBrands(){
     const response = await fetch(`${BASE_URL}brands`);
-    const jsonBrands = await response.json();
+
     if(!response.ok) {
-       throw errorBrands
+       throw errorBrands;
     }
-    return  jsonBrands;
+
+    return  await response.json();
 }
 
 async function checkAuthentication() {
