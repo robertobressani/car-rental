@@ -1,11 +1,11 @@
 import moment from 'moment';
 
-export  function dateDiff(end, start){
+export  function dateUtils(end, start){
     return moment.duration(end.diff(start)).asDays();
 }
 
 export function dateFormat(date){
-    if(date.isValid())
+    if(date && date.isValid())
         return date.format("yyyy-MM-DD");
     return false;
 }
