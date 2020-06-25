@@ -1,10 +1,9 @@
 import React from 'react';
-import {Button, Row, Jumbotron, Nav, ProgressBar, Col, Table} from 'react-bootstrap';
+import {Button, Row, Jumbotron, Nav, ProgressBar, Col, Table, Alert} from 'react-bootstrap';
 import API from "../api/API";
 import {getEuro} from "../utils/currency";
 
 //TODO try to add sorting in table
-//TODO when no filter selected, show all cars
 
 class CarList extends React.Component {
     constructor() {
@@ -14,7 +13,8 @@ class CarList extends React.Component {
             categories: ["A", "B", "C", "D", "E"],
             selectedCategories: [],
             brands: [],
-            selectedBrands: []
+            selectedBrands: [],
+            error: false
         };
     }
 
@@ -22,20 +22,24 @@ class CarList extends React.Component {
      * when mounted, loads cars and brands from server
      */
     componentDidMount() {
-        //TODO error handling
        API.getBrands().then(result => this.setState({brands: result, loading: false}))
-           .catch(error => this.setState({error: error}));
+           .catch(error => this.setState({error: error.msg}));
 
     }
 
     render() {
+        if(this.state.error)
+            return <Alert  variant="danger" className="jumbotron-space" >
+                <Alert.Heading>An error occurred</Alert.Heading>
+                <p>{this.state.error}</p>
+            </Alert>;
         return <><Jumbotron className="row jumbotron-space justify-content-between">
             <CarFilterBox name={"Select car category"} values={this.state.categories} loading={this.state.loading}
                           selected={this.state.selectedCategories} setter={this.setCategory}
                           setAll={this.setAllCategories} size={5}/>
             <CarFilterBox  name={"Select car brand"} values={this.state.brands} loading={this.state.loading}
                           selected={this.state.selectedBrands} setter={this.setBrand} setAll={this.setAllBrands} size={7}/>
-        </Jumbotron><CarTable categories={this.state.selectedCategories} brands={this.state.selectedBrands}/></>;
+        </Jumbotron><CarTable  setError={this.setError} categories={this.state.selectedCategories} brands={this.state.selectedBrands}/></>;
 
     }
 
@@ -103,6 +107,9 @@ class CarList extends React.Component {
         else this.setState({selectedBrands: []})
     }
 
+    setError=(msg)=> this.setState({error:msg});
+
+
 }
 
 function CarFilterBox(props) {
@@ -145,7 +152,7 @@ class CarTable extends  React.Component{
     componentDidMount() {
         API.getCars().then(x=>{this.setState(
             {cars:x, loading:false});
-        });
+        }).catch(error=> this.props.setError(error.msg));
     }
 
     render(){
