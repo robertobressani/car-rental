@@ -152,7 +152,8 @@ function ConfiguratorForm(props) {
             <Form.Label>Start date of rental:</Form.Label>
             <Form.Control type="date" defaultValue={dateFormat(props.configuration.start)}
                           onChange={(event) => props.updateValue("start", moment(event.target.value))}
-                          required min={dateFormat(moment().add(1,'days'))}/>
+                          required min={dateFormat(moment().add(1,'days'))}
+                          max={dateFormat(props.configuration.end)}/>
         </Form.Group>
         <Form.Group className="col-12 col-md-4">
             <Form.Label>End date of rental:</Form.Label>
