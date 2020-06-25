@@ -17,10 +17,10 @@ class Configurator extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            submitted: false, loading: false, completed:false,
+            submitted: false, loading: false, completed: false,
             configuration: new Configuration(), price_num: false,
             creditCard: {cvv: "", focused: "", name: "", number: ""},
-            error: false
+            error: false, error_payment: false
         }
         this.form = React.createRef();
     }
@@ -43,20 +43,20 @@ class Configurator extends React.Component {
                     configuration.kilometer = 0;
 
                 API.searchConfig(configuration).then(result => {
-                    if(result)
+                    if (result)
                         this.setState({price_num: result})
                     else
                         this.setState({error: "Impossible to perform the search, please retry"});
-                }).catch(err=>{
-                    if(err===401)
+                }).catch(err => {
+                    if (err === 401)
                         this.props.unLog();
                     else {
                         this.setState({error: err.msg});
                     }
-                }).finally(()=>this.setState({loading:false}));
+                }).finally(() => this.setState({loading: false}));
 
 
-            } else if(this.state.configuration.isCompleted() || this.state.price_num){
+            } else if (this.state.configuration.isCompleted() || this.state.price_num) {
                 //Prompting errors through form validation of HTML if all fields are filled in or a result has been obtained
                 // but configuration is not valid
                 this.form.current.reportValidity();
@@ -75,7 +75,7 @@ class Configurator extends React.Component {
             else if (name === "unlimited")
                 configuration.kilometer = value ? 150 : 149;
             //setting submitted= false, so that a new load can be performed if valid
-            if(configuration.isValid())
+            if (configuration.isValid())
                 return {configuration: configuration, submitted: false};
             //deleting current result
             return {configuration: configuration, submitted: false};
@@ -104,11 +104,16 @@ class Configurator extends React.Component {
             API.saveRental(this.state.configuration, creditCard, this.state.price_num.price).then(r => {
                 if (r)
                     this.setState({completed: true});
-            }).catch(err=>{
-                if(err===401)
+                else {
+                    this.setState({error_payment:"Unable to process the request, please retry"});
+                }
+            }).catch(err => {
+                if (err === 401)
                     this.props.unLog();
             });
 
+        } else {
+            e.target.reportValidity();
         }
     }
 
@@ -123,16 +128,17 @@ class Configurator extends React.Component {
                 return <Redirect to={"/rentals"}/>;
             return <><Jumbotron className=" jumbotron-space">
                 <ConfiguratorForm formRef={this.form} updateValue={(name, value) =>
-                                        this.updateConfigurationValue(name, value)}
+                    this.updateConfigurationValue(name, value)}
                                   configuration={this.state.configuration}/>
             </Jumbotron>
-                {(this.state.submitted  && this.state.price_num)|| this.state.error ?
+                {(this.state.submitted && this.state.price_num) || this.state.error ?
                     <AvailableCar loading={this.state.loading}
-                                  cancelError={()=>this.setState({error:false})}
+                                  cancelError={() => this.setState({error: false})}
                                   error={this.state.error} price_num={this.state.price_num}/> : <></>
                 }
                 <Route exact path="/configurator/pay">
-                    <PaymentDialog card={this.state.creditCard} updateFocus={(e) => this.updateFocusCard(e)}
+                    <PaymentDialog error={this.state.error_payment} card={this.state.creditCard}
+                                   updateFocus={(e) => this.updateFocusCard(e)}
                                    updateCredit={(name, value) => this.updateCardValue(name, value)}
                                    price={this.state.price_num.price} validate={this.checkPayment}
                                    configuration={this.state.configuration /*needed to detect if the configuration is valid*/}/>
@@ -153,13 +159,14 @@ function ConfiguratorForm(props) {
             <Form.Label>Start date of rental:</Form.Label>
             <Form.Control type="date" defaultValue={dateFormat(props.configuration.start)}
                           onChange={(event) => props.updateValue("start", moment(event.target.value))}
-                          required min={dateFormat(moment().add(1,'days'))}
+                          required min={dateFormat(moment().add(1, 'days'))}
                           max={dateFormat(props.configuration.end)}/>
         </Form.Group>
         <Form.Group className="col-12 col-md-4">
             <Form.Label>End date of rental:</Form.Label>
             <Form.Control type="date" defaultValue={
-                dateFormat(props.configuration.end)} required min={dateFormat(props.configuration.start) || dateFormat(moment().add(1,'days'))}
+                dateFormat(props.configuration.end)} required
+                          min={dateFormat(props.configuration.start) || dateFormat(moment().add(1, 'days'))}
                           onChange={(event) => props.updateValue("end", moment(event.target.value))}/>
         </Form.Group>
         <Form.Group className="col-12 col-md-4">
@@ -203,16 +210,18 @@ function ConfiguratorForm(props) {
 }
 
 function AvailableCar(props) {
-    if(props.error)
+    if (props.error)
         return <Alert variant="danger" dismissible onClose={props.cancelError}>
             <Alert.Heading>An error occurred</Alert.Heading>
             <p>{props.error}</p>
-    </Alert>;
+        </Alert>;
     else if (props.loading)
         return <ProgressBar animated now={100}/>
     else if (props.price_num.available > 0)
         return <Alert variant="success">
-            <Alert.Heading>We've found {props.price_num.available > 1 ? props.price_num.available + " " : "a "} car{props.price_num.available > 1 ? "s" : ""} for you!</Alert.Heading>
+            <Alert.Heading>We've
+                found {props.price_num.available > 1 ? props.price_num.available + " " : "a "} car{props.price_num.available > 1 ? "s" : ""} for
+                you!</Alert.Heading>
             <p>
                 There {props.price_num.available > 1 ? "are" : "is"} {props.price_num.available > 1 ? props.price_num.available + " " : "a "}
                 car{props.price_num.available > 1 ? "s" : ""} that satisf{props.price_num.available > 1 ? "y " : "ies "}
@@ -244,14 +253,23 @@ function PaymentDialog(props) {
         return <Redirect to={"/configurator"}/>;
     return <Modal show={true}>
         <Modal.Header>
-            <Modal.Title>Insert your payment data <h6>Confirm the payment of {props.price} € </h6></Modal.Title>
+            <Modal.Title>Insert your payment data <h6>Confirm the payment of {getEuro(props.price)}</h6>
+
+            </Modal.Title>
 
         </Modal.Header>
+        {props.error ?
 
+            <Alert variant="danger">
+                <h6>{props.error}</h6>
+            </Alert>
+            : null
+        }
         <Modal.Body>
-            <PaymentForm card={props.card} update={props.updateCredit} focus={props.updateFocus}
+            <PaymentForm card={props.card}  update={props.updateCredit} focus={props.updateFocus}
                          validate={props.validate}/>
         </Modal.Body>
+
 
 
     </Modal>;
