@@ -13,7 +13,7 @@ import {getEuro} from "../utils/currency";
 
 //TODO try to add sorting in table
 
-function Rentals() {
+function Rentals(props) {
 	const value = useContext(AuthenticationContext);
 	const [loadFuture, setLoadFuture] = useState(false);
 	const [loadPast, setLoadPast] = useState(false);
@@ -29,24 +29,32 @@ function Rentals() {
 				setFuture([...futureRentals].filter(rental=>rental.id!==x));
 			else
 				setError(`Impossible to delete car rental number ${x}`);
-		}).catch(()=>
-			//should not come hear, unless network error
-			setError(`Impossible to delete car rental number ${x}`))
-		.finally(()=>
+		}).catch((err)=>{
+			if(err===401)
+				props.unLog();
+			else
+				//should not come hear, unless network error
+				setError(`Impossible to delete car rental number ${x}`);
+		}).finally(()=>
 			//removing infinite looping (if network error) spinner
 			setLoading([...loading].filter(load=>load!==x)));
 	}
 
 	useEffect(() => {
-		API.getRentals(false).then(x => {
-			setFuture(x);
+		Promise.all([API.getRentals(true), API.getRentals(false)]).then(result=>{
+			setPast(result[0]);
+			setFuture(result[1]);
+
+		}).catch((err)=>{
+			if(err===401)
+				props.unLog();
+			else
+				//should not come hear, unless network error
+				setError(`Impossible to load  rentals`);
+		}).finally(()=> {
 			setLoadFuture(true);
-		});
-		//TODO add error handling
-		API.getRentals(true).then(x => {
-			setPast(x);
 			setLoadPast(true);
-		})
+		});
 	}, [])
 	if (!value.verifiedLogin || !(loadFuture && loadPast))
 		return <Jumbotron className="jumbotron-space"><ProgressBar animated now={100}/></Jumbotron>;

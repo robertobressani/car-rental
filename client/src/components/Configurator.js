@@ -42,7 +42,10 @@ class Configurator extends React.Component {
                     configuration.kilometer = 0;
 
                 //TODO add error checking
-                API.searchConfig(configuration).then(result => this.setState({price_num: result, loading: false}));
+                API.searchConfig(configuration).then(result => this.setState({price_num: result, loading: false})).catch(err=>{
+                    if(err===401)
+                        this.props.unLog();
+                });
 
 
             } else if(this.state.configuration.isCompleted()){
@@ -92,6 +95,9 @@ class Configurator extends React.Component {
             API.saveRental(this.state.configuration, creditCard, this.state.price_num.price).then(r => {
                 if (r)
                     this.setState({completed: true});
+            }).catch(err=>{
+                if(err===401)
+                    this.props.unLog();
             });
 
         }

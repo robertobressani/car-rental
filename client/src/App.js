@@ -51,16 +51,16 @@ class App extends React.Component {
                             <CarList/>
                         </Route>
                         <Route path="/configurator">
-                            <Configurator/>
+                            <Configurator unLog={this.unLogUser}/>
                         </Route>
                         <Route exact path="/login">
                             <Login/>
                         </Route>
                         <Route exact path="/rentals">
-                            <Rentals/>
+                            <Rentals unLog={this.unLogUser}/>
                         </Route>
                         <Route path="/">
-                            <Redirect to="/cars"/>
+                            <Redirect unLog={this.unLogUser} to="/cars"/>
                         </Route>
 
                     </Switch>
@@ -71,11 +71,17 @@ class App extends React.Component {
 
     doLogout=()=>{
         this.setState({verifiedLogin:false})
-        API.logout().then(()=>this.setState({userName:"", loggedIn:false, verifiedLogin:true})).catch(()=>{});
+        API.logout().catch(()=>{
+            //nothing to do
+        }).finally(this.unLogUser);
     }
 
     doLogin= (email, password)=>{
         return API.login(email, password).then(user=>this.setState({loggedIn: true, userName: user}));
+    }
+
+    unLogUser=()=>{
+        this.setState({userName:"", loggedIn:false, verifiedLogin:true});
     }
 }
 
