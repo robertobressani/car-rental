@@ -1,6 +1,6 @@
 import React, {useContext, useEffect, useState} from 'react';
 import AuthenticationContext from "./AuthenticationContext.js";
-import {Redirect} from "react-router-dom";
+import {Redirect, Link} from "react-router-dom";
 import {Jumbotron, ProgressBar, Table, Alert} from "react-bootstrap";
 import API from '../api/API.js';
 import DisabledDeleteIco from './img/empty_cancel.svg'
@@ -60,6 +60,11 @@ function Rentals(props) {
 		return <Jumbotron className="jumbotron-space"><ProgressBar animated now={100}/></Jumbotron>;
 	if (!value.loggedIn)
 		return <Redirect to={"/login"}/>;
+	if(!futureRentals.length && !pastRentals.length)
+		return  <Alert variant="light">
+			<h2>You have not performed any rental.</h2>
+			<Link to={"/configurator/"}>Click here to rent a car</Link>
+		</Alert>
 	return <>
 		<Alert show={!!error} variant="danger" className="jumbotron-space" dismissible onClose={() => setError(false)}>
 			<Alert.Heading>An error occurred</Alert.Heading>
