@@ -27,11 +27,8 @@ function SmartTable(props){
                         <PaginationTotalStandalone   { ...paginationProps }/>
                         <PaginationListStandalone   { ...paginationProps }/>
                     </Row>
-                    <BootstrapTable striped
-                                    hover
-                                    condensed keyField="id"  data={ props.data }  columns={ props.columns }
-                                    { ...paginationTableProps }
-                    />
+                    <BootstrapTable striped  hover responsive keyField="id"  data={ props.data }
+                                    columns={ props.columns } { ...paginationTableProps } />
                 </div>
             )
         }
