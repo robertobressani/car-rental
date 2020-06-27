@@ -11,7 +11,6 @@ import API from "../api/API";
 import {dateFormat} from "../utils/dateUtils";
 import {getEuro} from "../utils/currency";
 
-//TODO pass to server date and not moment
 
 class Configurator extends React.Component {
     constructor(props) {
@@ -298,7 +297,7 @@ function PaymentForm(props) {
         </Form.Group>
         <Form.Group>
             <Form.Label> CVV</Form.Label>
-            <Form.Control type="tel" placeholder="CVV" minlength={"3"} maxLength={"3"} pattern="[0-9]+"
+            <Form.Control type="tel" placeholder="CVV" minLength={"3"} maxLength={"3"} pattern="[0-9]+"
                           onFocus={props.focus} name="cvc"
                           onChange={(e) => props.update("cvv", e.target.value)} required/>
         </Form.Group>
