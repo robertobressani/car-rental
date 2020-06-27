@@ -1,5 +1,5 @@
 import moment from "moment";
-import {dateDiff} from "../utils/dateUtils";
+import {dateDiff, dateFormat} from "../utils/dateUtils";
 
 export default  class Configuration{
     constructor(start="", end="", category="", kilometer=0, unlimited=false, age=18, extra_drivers=0, insurance=false) {
@@ -29,5 +29,12 @@ export default  class Configuration{
             && this.end   && this.end.isValid()  && ["A", "B", "C", "D", "E", "F"].includes(this.category)
             && (this.unlimited || this.kilometer > 0) &&  this.extra_drivers >= 0;
 
+    }
+
+    toNetwork(){
+        const conf={...this};
+        conf.start=dateFormat(conf.start);
+        conf.end=dateFormat(conf.end);
+        return conf;
     }
 }

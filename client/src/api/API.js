@@ -114,7 +114,7 @@ async function saveRental(configuration, creditCard, price) {
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({configuration: configuration, amount: price, receipt: msg.receipt})
+            body: JSON.stringify({configuration: configuration.toNetwork(), amount: price, receipt: msg.receipt})
         });
         if(reservation_res.ok)
             return true;
