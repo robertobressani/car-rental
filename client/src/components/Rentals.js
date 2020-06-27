@@ -1,7 +1,7 @@
 import React, {useContext, useEffect, useState} from 'react';
 import AuthenticationContext from "./AuthenticationContext.js";
 import {Redirect, Link} from "react-router-dom";
-import {Jumbotron, ProgressBar, Table, Alert} from "react-bootstrap";
+import {Jumbotron, ProgressBar, Alert, Tooltip, OverlayTrigger} from "react-bootstrap";
 import API from '../api/API.js';
 import DisabledDeleteIco from './img/empty_cancel.svg'
 import DeleteIco from './img/eraser.svg';
@@ -11,6 +11,8 @@ import {dateDiff, dateFormat} from "../utils/dateUtils";
 import moment from "moment";
 import {getEuro} from "../utils/currency";
 import SmartTable from "./SmartTable";
+
+//TODO remove all imports unused
 
 function Rentals(props) {
 	const value = useContext(AuthenticationContext);
@@ -155,12 +157,15 @@ function RentalTable(props) {
 		data = data.map(x=>{
 			let res={...x};
 			res.delete=dateDiff(x.start, moment())>0 ?
-									(props.loading.includes(x.id) ?
-										<Spinner animation="border" size="sm" /> :
-										<img alt="delete" height={20} src={DeleteIco} onClick={()=>props.delete(x.id)}
-											 data-toggle="tooltip" data-placement="top" title="Delete this rental"/>)
-									: <img alt="impossible to delete" height={18} src={DisabledDeleteIco} data-toggle="tooltip"
-										   data-placement="top" title="You cannot delete a rental that has already started"/>
+				(props.loading.includes(x.id) ?
+					<Spinner animation="border" size="sm" /> :
+						<OverlayTrigger overlay={<Tooltip id={`tooltip-delete-${x.id}`}>Delete this rental </Tooltip>}>
+							<img alt="delete" height={20} src={DeleteIco} onClick={()=>props.delete(x.id)}/>
+						</OverlayTrigger>)
+								: <OverlayTrigger overlay={<Tooltip id={`tooltip-delete-${x.id}`}>
+								You cannot delete a rental that has already started </Tooltip>}>
+					<img alt="impossible to delete" height={18} src={DisabledDeleteIco}/>
+				</OverlayTrigger>
 			return res;
 		});
 	}
