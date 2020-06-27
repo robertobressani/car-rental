@@ -4,7 +4,7 @@ import {encodeQueryData} from "../utils/queryParams";
 
 const BASE_URL="/api/";
 
-//TODO test errors
+
 const errorCars={msg: "Unable to get the cars, please retry later" };
 const errorBrands={msg: "Unable to load brands' list, please retry later"};
 const loginErr={msg:"Wrong username or password"};

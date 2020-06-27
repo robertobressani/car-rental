@@ -42,6 +42,7 @@ class Configurator extends React.Component {
                     //make no sense have kilometers per day set to a number
                     configuration.kilometer = 0;
 
+                this.setState({error:false});
                 API.searchConfig(configuration).then(result => {
                     if (result)
                         this.setState({price_num: result})
@@ -98,7 +99,6 @@ class Configurator extends React.Component {
         e.preventDefault();
         if (e.target.checkValidity()) {
             console.log("form is valid");
-            //TODO add error management
             let creditCard = {...this.state.creditCard};
             delete creditCard['focused'];
             API.saveRental(this.state.configuration, creditCard, this.state.price_num.price).then(r => {
