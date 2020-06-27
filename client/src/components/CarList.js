@@ -2,6 +2,7 @@ import React from 'react';
 import {Button, Row, Jumbotron, Nav, ProgressBar, Col, Table, Alert} from 'react-bootstrap';
 import API from "../api/API";
 import {getEuro} from "../utils/currency";
+import SmartTable from "./SmartTable";
 
 //TODO try to add sorting in table
 
@@ -156,30 +157,39 @@ class CarTable extends  React.Component{
     }
 
     render(){
+        const data=this.state.cars.filter(x=> (!this.props.brands.length ||this.props.brands.includes(x.brand))
+            && (!this.props.categories.length || this.props.categories.includes(x.category)))
+            .map(x=>{
+                let res={...x};
+                res.price=getEuro(x.price);
+                return res;
+            });
+
+        const columns = [{
+            dataField: 'id',
+            text: 'ID',
+            sort: true
+        }, {
+            dataField: 'brand',
+            text: 'Brand',
+            sort: true
+        },{
+            dataField: 'model',
+            text: 'Model',
+            sort: true
+        }, {
+            dataField: 'category',
+            text: 'Category ',
+            sort: true
+        },{
+            dataField: 'price',
+            text: 'Minimum daily price',
+            sort: true
+        }];
+
         if(this.state.loading)
             return <ProgressBar animated now={100}/>;
-        return <Table striped bordered hover responsive>
-            <thead>
-            <tr>
-                <th>#</th>
-                <th>Brand</th>
-                <th>Model</th>
-                <th>Category</th>
-                <th>Minimum daily price</th>
-            </tr>
-            </thead>
-            <tbody>
-            {this.state.cars.filter(x=> (!this.props.brands.length ||this.props.brands.includes(x.brand))
-                && (!this.props.categories.length || this.props.categories.includes(x.category))).map(x=>{
-                return <tr key={x.id}>
-                    <td>{x.id}</td>
-                    <td>{x.brand}</td>
-                    <td>{x.model}</td>
-                    <td>{x.category}</td>
-                    <td>{getEuro(x.price)}</td></tr>;
-            })}
-            </tbody>
-        </Table>
+        return <SmartTable data={data} columns={columns}/>
     }
 
 }
