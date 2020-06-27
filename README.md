@@ -48,22 +48,22 @@ All the REST APIs will begin with `/api` (omitted in the following part)
   - response body with fake payment code number in case of good request
 - POST `/rentals` 
   - request body with rental configuration, accepted price and payment receipt info, in body, as in the example that follows:
-  ```
-  { 
-    configuration: {
-    start: '2020-06-24T22:00:00.000Z',
-    end: '2020-06-24T22:00:00.000Z',
-    category: 'E',
-    kilometer: '35',
+```
+{
+  configuration: {
+    start: '2020-07-04',
+    end: '2020-07-16',
+    category: 'C',
+    kilometer: '46',
     unlimited: false,
     age: 18,
     extra_drivers: 0,
     insurance: false
-    },
-    amount: 39.9,
-    receipt: 943619
-  }
-  ```
+  },
+  amount: 778.05,
+  receipt: 220999
+}
+```
   - response with empty body (status code is meaningful)
 - DELETE `/rentals/:id`
   - no request body, only GET parameters indicating the id of the rental to delete
