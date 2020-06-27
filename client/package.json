@@ -9,6 +9,8 @@
     "moment": "^2.26.0",
     "react": "^16.13.1",
     "react-bootstrap": "^1.0.1",
+    "react-bootstrap-table-next": "^4.0.3",
+    "react-bootstrap-table2-paginator": "^2.1.2",
     "react-credit-cards": "^0.8.3",
     "react-dom": "^16.13.1",
     "react-scripts": "3.4.1"
