@@ -17,11 +17,13 @@ body {
 }
 
 .jumbotron-space {
-  margin-top: 2vh;
-  margin-left: 1vw;
-  margin-right: 1vw;
+  margin: 2vh 1vw;
   padding-top: 2vh;
   padding-bottom: 2vh;
+}
+
+.space{
+  padding: 2vh 0;
 }
 
 .bg-grey{
