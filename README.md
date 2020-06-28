@@ -1,9 +1,9 @@
 # Exam #1: "Car rental"
-## Student: s270079 BRESSANI ROBERTO
+## Student: s270079 BRESSANI Roberto
 
 ## React client application routes
 
-- Route `/`:  will redirect to `/cars`
+- Route `/` (and all non-matching routes):  will redirect to `/cars`
 - Route `/cars`: main page that shows all the cars, that can filter by category and brand
 - Route `/login`: login page (together with `/`, is the only one accisible to non logged users)
 - Route `/config`: configurator page
@@ -81,13 +81,19 @@ All the REST APIs will begin with `/api` (omitted in the following part)
 
 ## Main React Components
 
-
-<!--TODO add components -->
-- `ListOfSomething` (in `List.js`): component purpose and main functionality
-- `GreatButton` (in `GreatButton.js`): component purpose and main functionality
-- ...
-
-(only _main_ components, minor ones may be skipped)
+- `App` (in `App.js`): main React component, it will manage all the other components, making them rendering according to the routes
+  - `Header` (in `Header.js`): manages the top part of the page, with buttons to log/in ou. When the user is logged in, it renders also the `NavigationPanel` for the navigation between pages (2 different instantiation of this component are created, one to be shown in desktop mode and one in mobile, with different classes and properties ).
+  - `CarList` (in `CarList.js`): it manages the rendering of `/cars` route and the state of all categories, brands and the selected ones. Uses:
+    - `CarFilterBox` (in `CarFilters.js`): manages the filter part. Uses `CarFilterItem`, declared in the same file
+    - `CarTable` (in `.js`): manages all the cars and renders them according to the filters. Uses `SmartTable` (`SmartTable.js`) to render the list (provides pagination and sorting by columns).
+  - `Login` (in `Login.js`): manage the rendering of the `/login` page, using:
+    - `LoginForm` (in `Login.js`): manages the rendering of the login form, its state and submission
+  -  `Configurator` (in `Configurator.js`): page that manages the configuration, the credit card infos, the availabillity of cars and their rendering. It is always mounted so that the navigation through the pages keeps the configuration that has being performed. Uses:
+      - `ConfigurationForm` (in `ConfigurationForm.js`): manages all the rendering of form for the configuration
+      -  `AvailableCar` (in `ConfiguratorForm.js`): renders the messages after a search
+      - `PaymentDialog` (in `Payment.js`): renders the modal for the payment. Uses `PaymentForm` from the same file to render the form and the example credit card
+  - `Rentals` (in `Rentals.js`): manages rendering and states of `/rentals` route. If no rental is present, just print a message. Uses:
+     - `RentalTable` (in `RentalTable.js`) [generated twice by `Rentals`, one for past rentals and one for the future/current ones]: renders the header message and the table of rentals (using `SmartTable`), only if there are rentals in that "category"
 
 ## Screenshot
 
