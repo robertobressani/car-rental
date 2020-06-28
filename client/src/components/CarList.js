@@ -1,14 +1,13 @@
 import React from 'react';
-import {Button, Row, Jumbotron, Nav, ProgressBar, Col, Table, Alert} from 'react-bootstrap';
+import {Button, Row, Jumbotron, Nav, ProgressBar, Col, Alert} from 'react-bootstrap';
 import API from "../api/API";
 import {getEuro} from "../utils/currency";
 import SmartTable from "./SmartTable";
 
-//TODO try to add sorting in table
-
 class CarList extends React.Component {
     constructor() {
         super();
+        document.title="Rent.com - Our cars"
         this.state = {
             loading: true,
             categories: ["A", "B", "C", "D", "E"],

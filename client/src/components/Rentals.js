@@ -15,6 +15,7 @@ import SmartTable from "./SmartTable";
 //TODO remove all imports unused
 
 function Rentals(props) {
+	document.title="Rent.com - Your rentals";
 	const value = useContext(AuthenticationContext);
 	const [loadFuture, setLoadFuture] = useState(false);
 	const [loadPast, setLoadPast] = useState(false);

@@ -11,10 +11,12 @@ import API from "../api/API";
 import {dateFormat} from "../utils/dateUtils";
 import {getEuro} from "../utils/currency";
 
+//TODO manage state globally
 
 class Configurator extends React.Component {
     constructor(props) {
         super(props);
+        document.title="Rent.com - Start a new rental"
         this.state = {
             submitted: false, loading: false, completed: false,
             configuration: new Configuration(), price_num: false,

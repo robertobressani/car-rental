@@ -5,7 +5,7 @@ import {Alert, Button, Col, Form, Jumbotron, OverlayTrigger, Popover, ProgressBa
 
 function Login() {
     const value = useContext(AuthenticationContext);
-
+    document.title="Rent.com - Enter your account";
     if (!value.verifiedLogin)
         /**
          * While waiting for the login verification show waiting status
@@ -68,7 +68,6 @@ class LoginForm extends React.Component {
                     <span>Forget your password? </span> <OverlayTrigger trigger="click" placement="right"
                                                                         overlay={popover}>
                     <b>Click here</b>
-                    {/*TODO correct generated warning*/}
                 </OverlayTrigger>
                 </Form.Group>
                 <Row className="justify-content-end">
