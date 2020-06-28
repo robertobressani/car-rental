@@ -1,3 +1,6 @@
+/**
+ * Configuration file dedicated to "business" constants
+ */
 module.exports={
     prices: new Map([["A", 80], ["B", 70], ["C", 60], ["D", 50], ["E", 40]]),
     discounts: new Map([
