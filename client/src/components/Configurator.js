@@ -15,7 +15,6 @@ import PaymentDialog from "./Payment";
 class Configurator extends React.Component {
     constructor(props) {
         super(props);
-        document.title="Rent.com - Start a new rental"
         this.state = {
             submitted: false, loading: false, completed: false,
             configuration: new Configuration(), price_num: false,
@@ -138,6 +137,7 @@ class Configurator extends React.Component {
     render() {
         if(!this.props.show)
             return <></>;
+        document.title="Rent.com - Start a new rental";
         return <AuthenticationContext.Consumer>{(value) => {
             if (!value.verifiedLogin)
                 return <Jumbotron className="jumbotron-space"><ProgressBar animated now={100}/></Jumbotron>;

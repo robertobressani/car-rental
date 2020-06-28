@@ -11,7 +11,7 @@ class CarList extends React.Component {
     constructor() {
         super();
         //setting page title
-        document.title="Rent.com - Our cars"
+        document.title="Rent.com - Our cars";
         this.state = {
             loading: true,
             //all categories
