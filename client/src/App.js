@@ -50,9 +50,7 @@ class App extends React.Component {
                         <Route exact path="/cars">
                             <CarList/>
                         </Route>
-                        <Route path="/configurator">
-                            <Configurator unLog={this.unLogUser}/>
-                        </Route>
+                        <Route exact path={"/configurator"}/>
                         <Route exact path="/login">
                             <Login/>
                         </Route>
@@ -60,10 +58,14 @@ class App extends React.Component {
                             <Rentals unLog={this.unLogUser}/>
                         </Route>
                         <Route path="/">
-                            <Redirect unLog={this.unLogUser} to="/cars"/>
+                            <Redirect to="/cars"/>
                         </Route>
-
                     </Switch>
+
+                    <Route path={"/:path"} render={({match})=>
+                       <Configurator unLog={this.unLogUser} show={match.params.path.startsWith("configurator")}/>}
+                    />
+
                 </AuthenticationContext.Provider>
             </Router>
         </Container>;

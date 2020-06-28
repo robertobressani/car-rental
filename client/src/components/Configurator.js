@@ -120,11 +120,15 @@ class Configurator extends React.Component {
 
 
     render() {
+        if(!this.props.show)
+            return <></>;
         return <AuthenticationContext.Consumer>{(value) => {
             if (!value.verifiedLogin)
                 return <Jumbotron className="jumbotron-space"><ProgressBar animated now={100}/></Jumbotron>;
-            if (!value.loggedIn)
+            if (!value.loggedIn) {
+                this.setState({configuration: new Configuration(), price_num: false});
                 return <Redirect to={"/login"}/>;
+            }
             if (this.state.completed)
                 return <Redirect to={"/rentals"}/>;
             return <><Jumbotron className=" jumbotron-space">
