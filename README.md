@@ -97,8 +97,9 @@ All the REST APIs will begin with `/api` (omitted in the following part)
 
 ## Screenshot
 
-<!--TODO add screen shot -->
+
 ![Configurator Screenshot](./img/screenshot.jpg)
+![Configurator PaymentForm Screenshot](./img/screenshot_payment.jpg)
 
 ## Test users
 
