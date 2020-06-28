@@ -1,6 +1,8 @@
 const moment=require('moment');
 const Car= require('./Car.js');
-
+/**
+ * Class to represent a Rental performed by a user. Contains also the assigned car
+ */
 module.exports= class Rental{
     constructor(id,start, end, kilometer, unlimited, age, extra_drivers, insurance, car ) {
         this.id=id;
@@ -14,6 +16,11 @@ module.exports= class Rental{
         this.car=car;
     }
 
+    /**
+     * Function to cast a db row to a Rental object
+     * @param row
+     * @return {Rental}
+     */
     static of(row){
         return new Rental(row.id, moment(row.start_day), moment(row.end_day), row.unlimited_km ? -1 :row.kilometer,
             !!row.unlimited_km, row.driver_age, row.extra_drivers, row.extra_insurance,

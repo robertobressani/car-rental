@@ -1,6 +1,9 @@
 const moment = require('moment');
 const {dateDiff} = require("../utils/dateUtils");
 
+/**
+ * Represents a configuration object for managing the configurator request
+ */
 module.exports=  class Configuration{
     constructor(start="", end="", category="", kilometer=0, unlimited=false, age=18, extra_drivers=0, insurance=false) {
         this.start=moment(start);
@@ -13,6 +16,10 @@ module.exports=  class Configuration{
         this.insurance=insurance;
     }
 
+    /**
+     * Checks the validity of the Configuration object
+     * @return {boolean}
+     */
     isValid(){
         let today=moment();
         today.hour(0);
@@ -26,8 +33,15 @@ module.exports=  class Configuration{
 
     }
 
+    /**
+     * Function to get a Configuration object from a generic object coming from a URI param
+     * @param obj
+     * @return {Configuration}
+     */
     static of(obj){
-        const conf=new Configuration(obj.start, obj.end, obj.category, +obj.kilometer,JSON.parse(obj.unlimited), +obj.age,
+        const conf=new Configuration(obj.start, obj.end, obj.category, +obj.kilometer,
+            //needed to cast 'false' to false and same for 'true'
+            JSON.parse(obj.unlimited), +obj.age,
             +obj.extra_drivers, JSON.parse(obj.insurance) );
         if(conf.isValid())
             return conf;
