@@ -60,7 +60,8 @@ class Configurator extends React.Component {
         if(this.state.completed || (!this.props.loggedIn && (this.state.price_num  || !this.state.configuration.isClear()) ))
             //payment performed or user has logout,
             //      clearing all the temporary states and redirecting to the list of rentals
-            this.setState({submitted: true, completed:false, price_num: false, configuration: new Configuration()});
+            this.setState({submitted: true, completed:false, price_num: false, configuration: new Configuration(),
+                creditCard: {cvv: "", focused: "", name: "", number: ""}});
     }
 
     /**
