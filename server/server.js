@@ -48,7 +48,6 @@ app.get(BASE_URL + "cars", (req, res) => {
  * @return the list of all brands
  */
 app.get(BASE_URL + "brands", (req, res) => {
-
     carDao.getBrands().then(cars => res.json(cars)).catch((err) => {
         res.status(500).json({
             errors: [{msg: err}],
@@ -84,7 +83,7 @@ app.post(BASE_URL + "login", (req, res) => {
 });
 
 /**
- * checks if a user has a validd cookie
+ * checks if a user has a valid cookie
  * @param empty (only cookie is important)
  * @return username if authenticated
  */
@@ -94,7 +93,9 @@ app.get(`${BASE_URL}login`, jwt({
         credentialsRequired: false,
     }), (req, res) => {
         if (req.user && req.user.user)
-            userDao.getUserName(req.user.user).then(user => res.status(200).json(user));
+            //req.user.user contains the ID extracted from the cookie
+            userDao.getUserName(req.user.user).then(user => res.status(200).json(user))
+                .catch(()=>res.status(500).end());
         else
             res.status(401).end();
     }
@@ -141,6 +142,7 @@ app.get(`${BASE_URL}configuration`, (req, res) => {
  * @returns JSON list of rentals
  */
 app.get(`${BASE_URL}rentals`, (req, res) => {
+    //evaluating ended string parameter presence
     if (!req.query.ended) {
         res.status(400).end();
         return;
@@ -156,14 +158,16 @@ app.get(`${BASE_URL}rentals`, (req, res) => {
  * @returns a fake payment code
  */
 app.post(`${BASE_URL}pay`, [check('credit_card.name').isLength({min: 5}),
-    //check('credit_card.number').isCreditCard(), //TODO see if is a good idea to use isCreditCard()
+    //check('credit_card.number').isCreditCard(), //in a real world, this validator should be used
+        // (I choose the simplest one since it is a stub API)
     check('credit_card.number').matches("[0-9]{16}"),
     check('credit_card.cvv').isLength({min: 3, max: 3}).matches("[0-9]+"),
     check('amount').isFloat()], (req, res) => {
     if (!validationResult(req).isEmpty())
-        //sending fake payment receipt code
+        //bad request
         res.status(400).end();
     else
+        //sending fake payment receipt code
         res.json({receipt: Math.floor(Math.random() * 999999)});
 
 });
@@ -181,14 +185,8 @@ app.post(`${BASE_URL}rentals`, [check('amount').isFloat(), check('receipt').isIn
         res.status(400).end();
     } else {
         rentalDao.addRental(conf, req.body.amount, req.user.user)
-            .then(() => {
-                res.status(200).end()
-            })
-            .catch((err) => {
-                console.log(err);
-                res.status(500).end()
-            })
-        //TODO check unhandled error that sometimes occurs
+            .then(() => res.status(200).end())
+            .catch((err) => res.status(500).end());
     }
 });
 
@@ -203,8 +201,6 @@ app.delete(`${BASE_URL}rentals/:rentalId`, [check('rentalId').isInt()], (req, re
     else
         rentalDao.deleteRental(req.user.user, +req.params.rentalId)
             .then((result) => res.status(result ? 200 : 400).end());
-
-
 });
 
 
