@@ -43,7 +43,7 @@ function PaymentForm(props) {
         <Form.Group>
             <Form.Label>Credit card owner (full name):</Form.Label>
             <Form.Control type="text" placeholder="SURNAME Name" value={props.card.name} onFocus={props.focus}
-                          name="name"
+                          name="name" minLength={5}
                           onChange={(e) => props.update("name", e.target.value)} required/>
         </Form.Group>
         <Form.Group>
