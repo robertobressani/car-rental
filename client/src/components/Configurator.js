@@ -1,17 +1,13 @@
 import React from 'react';
-import {Link, Redirect, Route} from 'react-router-dom';
-import Cards from 'react-credit-cards';
+import {Redirect, Route} from 'react-router-dom';
 import 'react-credit-cards/es/styles-compiled.css';
-import {Alert, Button, Col, Form, Jumbotron, Modal, ProgressBar} from 'react-bootstrap';
+import {Jumbotron,  ProgressBar} from 'react-bootstrap';
 import AuthenticationContext from './AuthenticationContext.js';
-
-import moment from 'moment';
 import Configuration from '../entity/Configuration.js';
 import API from "../api/API";
-import {dateFormat} from "../utils/dateUtils";
-import {getEuro} from "../utils/currency";
 
-//TODO manage state globally
+import {AvailableCar, ConfiguratorForm} from "./ConfiguratorForm";
+import PaymentDialog from "./Payment";
 
 class Configurator extends React.Component {
     constructor(props) {
@@ -149,172 +145,8 @@ class Configurator extends React.Component {
                                    configuration={this.state.configuration /*needed to detect if the configuration is valid*/}/>
                 </Route>
             </>;
-
-        }
-
-        }</AuthenticationContext.Consumer>;
-
-
+        }}</AuthenticationContext.Consumer>;
     }
-}
-
-function ConfiguratorForm(props) {
-    return <Form className="row " ref={props.formRef}>
-        <Form.Group className="col-12 col-md-4">
-            <Form.Label>Start date of rental:</Form.Label>
-            <Form.Control type="date" defaultValue={dateFormat(props.configuration.start)}
-                          onChange={(event) => props.updateValue("start", moment(event.target.value))}
-                          required min={dateFormat(moment().add(1, 'days'))}
-                          max={dateFormat(props.configuration.end)}/>
-        </Form.Group>
-        <Form.Group className="col-12 col-md-4">
-            <Form.Label>End date of rental:</Form.Label>
-            <Form.Control type="date" defaultValue={
-                dateFormat(props.configuration.end)} required
-                          min={dateFormat(props.configuration.start) || dateFormat(moment().add(1, 'days'))}
-                          onChange={(event) => props.updateValue("end", moment(event.target.value))}/>
-        </Form.Group>
-        <Form.Group className="col-12 col-md-4">
-            <Form.Label> Category: </Form.Label>
-            <Form.Control as="select" defaultValue={props.configuration.category}
-                          onChange={(event) => props.updateValue("category", event.target.value)} required>
-                <option/>
-                <option>A</option>
-                <option>B</option>
-                <option>C</option>
-                <option>D</option>
-                <option>E</option>
-            </Form.Control>
-        </Form.Group>
-        <Form.Group className="col-6 col-md-2">
-            <Form.Label>Age of driver: </Form.Label>
-            <Form.Control type="number" defaultValue={props.configuration.age}
-                          onChange={(event) => props.updateValue("age", +event.target.value)}
-                          min={18} max={99}/>
-        </Form.Group>
-        <Form.Group className="col-6 col-md-2">
-            <Form.Label> Extra drivers: </Form.Label>
-            <Form.Control type="number" defaultValue={props.configuration.extra_drivers} min={0}
-                          onChange={(event) => props.updateValue("extra_drivers", +event.target.value)}/>
-        </Form.Group>
-        <Form.Group className="col-12 col-md-4">
-            <Form.Label>Kilometers per day : {props.configuration.unlimited ?
-                "unlimited" : props.configuration.kilometer}</Form.Label>
-            <Form.Control type="range" min={1} max={150} value={props.configuration.kilometer}
-                          onChange={(event) => props.updateValue("kilometer", event.target.value)}
-                          disabled={props.configuration.unlimited}/>
-            <Form.Check label="Unlimited" checked={props.configuration.unlimited}
-                        onChange={(event) => props.updateValue("unlimited", event.target.checked)}/>
-        </Form.Group>
-        <Form.Group className="col-12 col-md-3">
-            <Form.Check checked={props.configuration.insurance}
-                        onChange={(event) => props.updateValue("insurance", event.target.checked)}
-                        label="Extra insurance"/>
-        </Form.Group>
-    </Form>
-}
-
-function AvailableCar(props) {
-    if (props.error)
-        return <Alert variant="danger" dismissible onClose={props.cancelError}>
-            <Alert.Heading>An error occurred</Alert.Heading>
-            <p>{props.error}</p>
-        </Alert>;
-    else if (props.loading)
-        return <ProgressBar animated now={100}/>
-    else if (props.price_num.available > 0)
-        return <Alert variant="success">
-            <Alert.Heading>We've
-                found {props.price_num.available > 1 ? props.price_num.available + " " : "a "} car{props.price_num.available > 1 ? "s" : ""} for
-                you!</Alert.Heading>
-            <p>
-                There {props.price_num.available > 1 ? "are" : "is"} {props.price_num.available > 1 ? props.price_num.available + " " : "a "}
-                car{props.price_num.available > 1 ? "s" : ""} that satisf{props.price_num.available > 1 ? "y " : "ies "}
-                your search, available at <strong>{getEuro(props.price_num.price)} </strong>
-            </p>
-            <hr/>
-            <div className="d-flex justify-content-end">
-                <Link to="/configurator/pay"><Button variant="outline-success">
-                    Proceed to payment
-                </Button></Link>
-            </div>
-        </Alert>;
-    else return <Alert variant="danger">
-            <Alert.Heading>There are no cars for you!</Alert.Heading>
-            <p>
-                We are sorry, we cannot rent any car according to the search you have perfomed.
-            </p>
-            <hr/>
-            <div className="d-flex justify-content-end">
-                <Button variant="outline-danger">
-                    Notify me when a car is available
-                </Button>
-            </div>
-        </Alert>;
-}
-
-function PaymentDialog(props) {
-    if (!props.configuration.isValid())
-        return <Redirect to={"/configurator"}/>;
-    return <Modal show={true}>
-        <Modal.Header>
-            <Modal.Title>Insert your payment data <h6>Confirm the payment of {getEuro(props.price)}</h6>
-
-            </Modal.Title>
-
-        </Modal.Header>
-        {props.error ?
-
-            <Alert variant="danger">
-                <h6>{props.error}</h6>
-            </Alert>
-            : null
-        }
-        <Modal.Body>
-            <PaymentForm card={props.card}  update={props.updateCredit} focus={props.updateFocus}
-                         validate={props.validate}/>
-        </Modal.Body>
-
-
-
-    </Modal>;
-}
-
-function PaymentForm(props) {
-    return <>
-        <Cards
-            cvc={props.card.cvv}
-            expiry={"12/99"}
-            focused={props.card.focused}
-            name={props.card.name}
-            number={props.card.number}
-        /><Form onSubmit={props.validate}>
-        <Form.Group>
-            <Form.Label>Credit card owner (full name):</Form.Label>
-            <Form.Control type="text" placeholder="SURNAME Name" value={props.card.name} onFocus={props.focus}
-                          name="name"
-                          onChange={(e) => props.update("name", e.target.value)} required/>
-        </Form.Group>
-        <Form.Group>
-            <Form.Label> Card number</Form.Label>
-            <Form.Control type="tel" placeholder="Your card number" minLength={"16"} maxLength={"16"} pattern="[0-9]+"
-                          name={"number" /*needed for focus of credit card library*/}
-                          onFocus={props.focus} onChange={(e) => props.update("number", e.target.value)} required/>
-        </Form.Group>
-        <Form.Group>
-            <Form.Label> CVV</Form.Label>
-            <Form.Control type="tel" placeholder="CVV" minLength={"3"} maxLength={"3"} pattern="[0-9]+"
-                          onFocus={props.focus} name="cvc"
-                          onChange={(e) => props.update("cvv", e.target.value)} required/>
-        </Form.Group>
-        <Form.Group className="row justify-content-end">
-            <Link to="/configurator" className="col-5 col-xl-3 pull-right ">
-                <Button variant="secondary">Close</Button>
-            </Link>
-            <Button type="submit" variant="success" className="col-5 col-xl-3 pull-right">Confirm</Button>
-            <Col xs={1}/>{/*introduces spaces between buttons*/}
-        </Form.Group>
-    </Form></>;
 }
 
 export default Configurator;
