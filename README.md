@@ -82,7 +82,7 @@ All the REST APIs will begin with `/api` (omitted in the following part)
 ## Main React Components
 
 - `App` (in `App.js`): main React component, it will manage all the other components, making them rendering according to the routes
-  - `Header` (in `Header.js`): manages the top part of the page, with buttons to log/in ou. When the user is logged in, it renders also the `NavigationPanel` for the navigation between pages (2 different instantiation of this component are created, one to be shown in desktop mode and one in mobile, with different classes and properties ).
+  - `Header` (in `Header.js`): manages the top part of the page, with buttons to log-in/out. When the user is logged in, it renders also the `NavigationPanel` for the navigation between pages (2 different instantiation of this component are created, one to be shown in desktop mode and one in mobile, with different classes and properties ).
   - `CarList` (in `CarList.js`): it manages the rendering of `/cars` route and the state of all categories, brands and the selected ones. Uses:
     - `CarFilterBox` (in `CarFilters.js`): manages the filter part. Uses `CarFilterItem`, declared in the same file
     - `CarTable` (in `.js`): manages all the cars and renders them according to the filters. Uses `SmartTable` (`SmartTable.js`) to render the list (provides pagination and sorting by columns).
@@ -102,8 +102,10 @@ All the REST APIs will begin with `/api` (omitted in the following part)
 
 ## Test users
 
-* sample@gmail.com, "password"
-* username, password
-* username, password (frequent customer)
-* username, password
-* username, password (frequent customer)
+* sample@gmail.com, "password" (frequent customer)
+* admin@gmail.com, "admin"
+* someone@gmail.com, "password1"
+* gmail@gmail.com, "password"
+* email@gmail.com, "password2" 
+
+In the date of 2020-08-15 there are less then 10% cars of category C available (1 over 12)
