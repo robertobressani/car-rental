@@ -1,8 +1,9 @@
 import React from 'react';
-import {Button, Row, Jumbotron, Nav, ProgressBar, Col, Alert} from 'react-bootstrap';
+import {Jumbotron,  Alert} from 'react-bootstrap';
 import API from "../api/API";
-import {getEuro} from "../utils/currency";
-import SmartTable from "./SmartTable";
+import CarFilterBox from "./CarFilters";
+import CarTable from "./CarTable";
+
 
 class CarList extends React.Component {
     constructor() {
@@ -106,91 +107,7 @@ class CarList extends React.Component {
             })
         else this.setState({selectedBrands: []})
     }
-
     setError=(msg)=> this.setState({error:msg});
-
-
-}
-
-function CarFilterBox(props) {
-    let content;
-    if (props.values.size > 0 || !props.loading)
-        content = props.values.sort().map(item =>
-            <CarFilterItem key={item} name={item} selected={
-                props.selected.includes(item)
-            } setter={props.setter}/>
-        );
-    else
-        content = <ProgressBar animated now={100}/>;
-    return <Col md={props.size} xs={12}><h4>{props.name}
-    </h4>
-        <Row className="no-gutters">
-        {content}
-        </Row>
-        <Nav className={"small-nav"}>
-            <Nav.Item>
-                <Nav.Link onClick={() => props.setAll(true)}>SELECT ALL</Nav.Link>
-            </Nav.Item>
-            <Nav.Item>
-                <Nav.Link onClick={() => props.setAll(false)}>DESELECT ALL</Nav.Link>
-            </Nav.Item>
-        </Nav>
-    </Col>;
-}
-
-function CarFilterItem(props) {
-    return <Button  className="m-1" key={props.name} variant={props.selected ? "primary" : "secondary"}
-                   onClick={() => props.setter(props.name, !props.selected)}
-    >{props.name}</Button>
-}
-
-class CarTable extends  React.Component{
-    constructor(props) {
-        super(props);
-        this.state={cars:[], loading:true};
-    }
-    componentDidMount() {
-        API.getCars().then(x=>{this.setState(
-            {cars:x, loading:false});
-        }).catch(error=> this.props.setError(error.msg));
-    }
-
-    render(){
-        const data=this.state.cars.filter(x=> (!this.props.brands.length ||this.props.brands.includes(x.brand))
-            && (!this.props.categories.length || this.props.categories.includes(x.category)))
-            .map(x=>{
-                let res={...x};
-                res.price=getEuro(x.price);
-                return res;
-            });
-
-        const columns = [{
-            dataField: 'id',
-            text: 'ID',
-            sort: true
-        }, {
-            dataField: 'brand',
-            text: 'Brand',
-            sort: true
-        },{
-            dataField: 'model',
-            text: 'Model',
-            sort: true
-        }, {
-            dataField: 'category',
-            text: 'Category ',
-            sort: true
-        },{
-            dataField: 'price',
-            text: 'Minimum daily price',
-            sort: true
-        }];
-
-        if(this.state.loading)
-            return <ProgressBar animated now={100}/>;
-        return <SmartTable data={data} columns={columns}/>
-    }
-
 }
 
 export default CarList;
