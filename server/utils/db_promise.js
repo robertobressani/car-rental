@@ -1,5 +1,14 @@
 const db = require('../db/db');
+/**
+ * Class that provides a Promise for a query (limits verbose code in a single class)
+ */
 
+/**
+ * Method to map db.all to a Promise
+ * @param query to be performed
+ * @param params if present, otherwise []
+ * @return {Promise}
+ */
 module.exports.queryAll = (query, params) => {
     return new Promise((resolve, reject) => {
         if (params)
@@ -18,6 +27,12 @@ module.exports.queryAll = (query, params) => {
     });
 };
 
+/**
+ * Method to map db.get to a Promise
+ * @param query to be performed
+ * @param params if present, otherwise []
+ * @return {Promise}
+ */
 module.exports.queryGet = (query, params) => {
     return new Promise((resolve, reject) => {
         if (params)
@@ -36,6 +51,12 @@ module.exports.queryGet = (query, params) => {
     });
 };
 
+/**
+ * Method to map db.run to a Promise
+ * @param query to be performed
+ * @param params if present, otherwise []
+ * @return {Promise}
+ */
 module.exports.queryRun = (query, params) => {
     return new Promise((resolve, reject) => {
         if (params)
