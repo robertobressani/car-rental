@@ -66,7 +66,7 @@ class App extends React.Component {
                     */}
                     <Route path={"*"} render={({match}) =>
                        <Configurator unLog={this.unLogUser} show={match.url.startsWith("/configurator")}
-                                     loggedIn={this.state.loggedIn || !this.state.verifiedLogin}/>}
+                                     loggedIn={this.state.loggedIn }/>}
                     />
 
                 </AuthenticationContext.Provider>
