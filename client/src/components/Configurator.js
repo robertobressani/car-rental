@@ -125,8 +125,11 @@ class Configurator extends React.Component {
                 this.setState({configuration: new Configuration(), price_num: false});
                 return <Redirect to={"/login"}/>;
             }
-            if (this.state.completed)
+            if (this.state.completed) {
+                //payment performed, clearing all the temporary states and redirecting to the list of rentals
+                this.setState({completed:false, price_num: false, configuration: new Configuration()});
                 return <Redirect to={"/rentals"}/>;
+            }
             return <><Jumbotron className=" jumbotron-space">
                 <ConfiguratorForm formRef={this.form} updateValue={(name, value) =>
                     this.updateConfigurationValue(name, value)}
@@ -137,7 +140,7 @@ class Configurator extends React.Component {
                                   cancelError={() => this.setState({error: false})}
                                   error={this.state.error} price_num={this.state.price_num}/> : <></>
                 }
-                <Route exact path="/configurator/pay">
+                <Route exact path="/configurator/payment">
                     <PaymentDialog error={this.state.error_payment} card={this.state.creditCard}
                                    updateFocus={(e) => this.updateFocusCard(e)}
                                    updateCredit={(name, value) => this.updateCardValue(name, value)}

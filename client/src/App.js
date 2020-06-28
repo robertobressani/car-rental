@@ -50,7 +50,7 @@ class App extends React.Component {
                         <Route exact path="/cars">
                             <CarList/>
                         </Route>
-                        <Route exact path={"/configurator"}/>
+                        <Route path={"/configurator"}/>
                         <Route exact path="/login">
                             <Login/>
                         </Route>
@@ -61,9 +61,11 @@ class App extends React.Component {
                             <Redirect to="/cars"/>
                         </Route>
                     </Switch>
-
-                    <Route path={"/:path"} render={({match})=>
-                       <Configurator unLog={this.unLogUser} show={match.params.path.startsWith("configurator")}/>}
+                    {/*Route is used only to detect the current URL, to decide whether to show the configurator or not
+                        Used to have a permanent configuration state
+                    */}
+                    <Route path={"*"} render={({match}) =>
+                       <Configurator unLog={this.unLogUser} show={match.url.startsWith("/configurator")}/>}
                     />
 
                 </AuthenticationContext.Provider>
