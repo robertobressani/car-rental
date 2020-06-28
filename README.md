@@ -47,7 +47,8 @@ All the REST APIs will begin with `/api` (omitted in the following part)
   - request body contains credit card and amount to pay
   - response body with fake payment code number in case of good request
 - POST `/rentals` 
-  - request body with rental configuration, accepted price and payment receipt info, in body, as in the example that follows:
+  - request body with rental configuration, accepted price and payment receipt info, in body, as in the example that follows
+-  response with empty body (status code is meaningful)
 ```
 {
   configuration: {
@@ -64,7 +65,7 @@ All the REST APIs will begin with `/api` (omitted in the following part)
   receipt: 220999
 }
 ```
-  - response with empty body (status code is meaningful)
+ 
 - DELETE `/rentals/:id`
   - no request body, only GET parameters indicating the id of the rental to delete
   - no response body (status code is meaningful)
@@ -85,7 +86,7 @@ All the REST APIs will begin with `/api` (omitted in the following part)
   - `Header` (in `Header.js`): manages the top part of the page, with buttons to log-in/out. When the user is logged in, it renders also the `NavigationPanel` for the navigation between pages (2 different instantiation of this component are created, one to be shown in desktop mode and one in mobile, with different classes and properties ).
   - `CarList` (in `CarList.js`): it manages the rendering of `/cars` route and the state of all categories, brands and the selected ones. Uses:
     - `CarFilterBox` (in `CarFilters.js`): manages the filter part. Uses `CarFilterItem`, declared in the same file
-    - `CarTable` (in `.js`): manages all the cars and renders them according to the filters. Uses `SmartTable` (`SmartTable.js`) to render the list (provides pagination and sorting by columns).
+    - `CarTable` (in `CarTable.js`): manages all the cars and renders them according to the filters. Uses `SmartTable` (`SmartTable.js`) to render the list (provides pagination and sorting by columns).
   - `Login` (in `Login.js`): manage the rendering of the `/login` page, using:
     - `LoginForm` (in `Login.js`): manages the rendering of the login form, its state and submission
   -  `Configurator` (in `Configurator.js`): page that manages the configuration, the credit card infos, the availabillity of cars and their rendering. It is always mounted so that the navigation through the pages keeps the configuration that has being performed. Uses:
