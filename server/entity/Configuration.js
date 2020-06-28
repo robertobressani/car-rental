@@ -43,8 +43,6 @@ module.exports=  class Configuration{
             //needed to cast 'false' to false and same for 'true'
             JSON.parse(obj.unlimited), +obj.age,
             +obj.extra_drivers, JSON.parse(obj.insurance) );
-        if(conf.isValid())
-            return conf;
-        throw {err: "Invalid configuration object"};
+        return conf;
     }
 }

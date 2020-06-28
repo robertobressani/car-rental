@@ -100,8 +100,6 @@ module.exports.getRentals=async(past, userId)=>{
  * @return {Promise<void>}
  */
 module.exports.addRental= async(conf, price, userId)=>{
-    if(!conf.isValid())
-        throw "Invalid configuration in the request";
     await db.queryRun("BEGIN TRANSACTION");
     const res= await computePrice(conf, userId);
     if(res.price!==price){
