@@ -65,7 +65,8 @@ class App extends React.Component {
                         Used to have a permanent configuration state
                     */}
                     <Route path={"*"} render={({match}) =>
-                       <Configurator unLog={this.unLogUser} show={match.url.startsWith("/configurator")}/>}
+                       <Configurator unLog={this.unLogUser} show={match.url.startsWith("/configurator")}
+                                     loggedIn={this.state.loggedIn || !this.state.verifiedLogin}/>}
                     />
 
                 </AuthenticationContext.Provider>

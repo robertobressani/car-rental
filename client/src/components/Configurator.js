@@ -9,6 +9,9 @@ import API from "../api/API";
 import {AvailableCar, ConfiguratorForm} from "./ConfiguratorForm";
 import PaymentDialog from "./Payment";
 
+/**
+ * Component to manage configurator page
+ */
 class Configurator extends React.Component {
     constructor(props) {
         super(props);
@@ -60,26 +63,37 @@ class Configurator extends React.Component {
                 this.form.current.reportValidity();
             }
         }
+        if(this.state.completed || (!this.props.loggedIn && (this.state.price_num  || !this.state.configuration.isClear()) ))
+            //payment performed or user has logout,
+            //      clearing all the temporary states and redirecting to the list of rentals
+            this.setState({submitted: true, completed:false, price_num: false, configuration: new Configuration()});
+
     }
 
+    /**
+     * Updates configuration values
+     */
     updateConfigurationValue(name, value) {
-        // console.log("called with:" + value);
         this.setState((state) => {
+            //duplicating current configuration
             let configuration = Object.assign(new Configuration(), {...state.configuration});
-
+            //setting up value
             configuration[name] = value;
             if (name === "kilometer")
+                //if setting up kilometers value, also unlimited flag is updated (from 150 km is considered unlimited)
                 configuration.unlimited = +value === 150;
             else if (name === "unlimited")
+                //if setting up unlimited flag, also kilometer must be updated properly
                 configuration.kilometer = value ? 150 : 149;
+
             //setting submitted= false, so that a new load can be performed if valid
-            if (configuration.isValid())
-                return {configuration: configuration, submitted: false};
-            //deleting current result
             return {configuration: configuration, submitted: false};
         });
     }
 
+    /**
+     *  Updates credit card values
+     */
     updateCardValue(name, value) {
         this.setState((state) => {
             let creditCard = {...state.creditCard};
@@ -88,28 +102,41 @@ class Configurator extends React.Component {
         });
     }
 
+    /**
+     * Updates focus state (used to turn credit card img)
+     */
     updateFocusCard(e) {
         this.updateCardValue("focused", e.target.name);
     }
 
+    /**
+     * Validate payment information on form submission
+     */
     checkPayment = (e) => {
         e.preventDefault();
         if (e.target.checkValidity()) {
-            console.log("form is valid");
+            //form is valid
+
+            //copying useful infos to send to the server
             let creditCard = {...this.state.creditCard};
             delete creditCard['focused'];
+
+            //performing request
             API.saveRental(this.state.configuration, creditCard, this.state.price_num.price).then(r => {
                 if (r)
+                    //setting complete state (it will redirect to /rentals)
                     this.setState({completed: true});
                 else {
+                    //signaling error
                     this.setState({error_payment:"Unable to process the request, please retry"});
                 }
             }).catch(err => {
+                //user is not loggedin anymore
                 if (err === 401)
                     this.props.unLog();
             });
-
         } else {
+            //reporting validity using HTML5 validation
             e.target.reportValidity();
         }
     }
@@ -121,13 +148,9 @@ class Configurator extends React.Component {
         return <AuthenticationContext.Consumer>{(value) => {
             if (!value.verifiedLogin)
                 return <Jumbotron className="jumbotron-space"><ProgressBar animated now={100}/></Jumbotron>;
-            if (!value.loggedIn) {
-                this.setState({configuration: new Configuration(), price_num: false});
+            if (!value.loggedIn)
                 return <Redirect to={"/login"}/>;
-            }
             if (this.state.completed) {
-                //payment performed, clearing all the temporary states and redirecting to the list of rentals
-                this.setState({completed:false, price_num: false, configuration: new Configuration()});
                 return <Redirect to={"/rentals"}/>;
             }
             return <><Jumbotron className=" jumbotron-space">
