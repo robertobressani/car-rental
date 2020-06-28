@@ -12,8 +12,9 @@ const availableCarsQuery= "SELECT COUNT(*) AS total " +
     "FROM cars " +
     "WHERE category= ? AND id NOT IN ( SELECT car_id " +
                     "FROM rentals " +
-                    "WHERE (start_day >= ? AND start_day <= ?) " +
-                    "OR ( end_day >= ? AND end_day <= ? ));";
+                    "WHERE (start_day BETWEEN ? AND  ?) " +
+                    "OR ( end_day BETWEEN ? AND  ? ) " +
+                    "OR ( start_day <= ? AND end_day >= ? ));";
 
 /**
  * Query to choose the ID of a car to rent
@@ -23,9 +24,10 @@ const chooseCarQuery="SELECT id " +
     "FROM cars " +
     "WHERE category= ? AND id NOT IN ( SELECT car_id " +
                         "FROM rentals " +
-                        "WHERE (start_day >= ? AND start_day <= ?) " +
-                        "OR ( end_day >= ? AND end_day <= ? )) " +
-    "LIMIT 1;";
+                        "WHERE (start_day BETWEEN ? AND  ?) " +
+                        "OR ( end_day BETWEEN ? AND  ? ) " +
+                        "OR ( start_day <= ? AND end_day >= ? )) " +
+                        "LIMIT 1;";
 
 /**
  * Query to get the number of rentals that a user has already terminated
@@ -110,7 +112,8 @@ module.exports.addRental= async(conf, price, userId)=>{
 
     //getting the id of the car that will be rent
     const carId = (await db.queryGet(chooseCarQuery, [conf.category, dateUtils.dateFormat(conf.start),
-        dateUtils.dateFormat(conf.end), dateUtils.dateFormat(conf.start), dateUtils.dateFormat(conf.end)] )).id;
+        dateUtils.dateFormat(conf.end), dateUtils.dateFormat(conf.start), dateUtils.dateFormat(conf.end),
+        dateUtils.dateFormat(conf.start), dateUtils.dateFormat(conf.end)] )).id;
 
     //saving the rental
     await db.queryRun(insertRentalQuery, [userId, carId,dateUtils.dateFormat(conf.start),
@@ -145,7 +148,8 @@ async function computePrice(conf, userId) {
              * query to get the number of available cars in the period for the requested category
              */
             db.queryGet(availableCarsQuery, [conf.category, dateUtils.dateFormat(conf.start),
-                dateUtils.dateFormat(conf.end), dateUtils.dateFormat(conf.start), dateUtils.dateFormat(conf.end)]),
+                dateUtils.dateFormat(conf.end), dateUtils.dateFormat(conf.start), dateUtils.dateFormat(conf.end),
+                dateUtils.dateFormat(conf.start), dateUtils.dateFormat(conf.end)]),
             /**
              * query to get number of past rentals of the user
              */
