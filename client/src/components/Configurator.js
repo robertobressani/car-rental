@@ -60,7 +60,7 @@ class Configurator extends React.Component {
             //payment performed or user has logout,
             //      clearing all the temporary states and redirecting to the list of rentals
             this.setState({submitted: true, completed:false, price_num: false, configuration: new Configuration(),
-                creditCard: {cvv: "", focused: "", name: "", number: ""}});
+                creditCard: {cvv: "", focused: "", name: "", number: ""}, error: false, error_payment: false});
     }
 
     /**
@@ -117,7 +117,7 @@ class Configurator extends React.Component {
             API.saveRental(this.state.configuration, creditCard, this.state.price_num.price).then(r => {
                 if (r)
                     //setting complete state (it will redirect to /rentals)
-                    this.setState({completed: true});
+                    this.setState({completed: true, error: false, error_payment: false});
                 else {
                     //signaling error
                     this.setState({error_payment:"Unable to process the request, please retry"});
