@@ -176,6 +176,8 @@ async function saveRental(configuration, creditCard, price) {
         });
         if (reservation_res.ok)
             return true;
+        // TO BE IMPLEMENTED WITH A REAL PAYMENT API:
+        // rollback_payment(msg);
     }
     if (payment_res.status === 401)
         throw 401;
