@@ -4,11 +4,18 @@ import {getEuro} from "../utils/currency";
 import {ProgressBar} from "react-bootstrap";
 import SmartTable from "./SmartTable";
 
+/**
+ * Car Table shown in /cars page
+ */
 class CarTable extends  React.Component{
     constructor(props) {
         super(props);
         this.state={cars:[], loading:true};
     }
+
+    /**
+     * loads all the cars and brands
+     */
     componentDidMount() {
         API.getCars().then(x=>{this.setState(
             {cars:x, loading:false});
@@ -16,14 +23,19 @@ class CarTable extends  React.Component{
     }
 
     render(){
-        const data=this.state.cars.filter(x=> (!this.props.brands.length ||this.props.brands.includes(x.brand))
-            && (!this.props.categories.length || this.props.categories.includes(x.category)))
-            .map(x=>{
-                let res={...x};
-                res.price=getEuro(x.price);
-                return res;
-            });
+        if(this.state.loading)
+            return <ProgressBar animated now={100}/>;
+        /**
+         * contains the car to be shown (according to filters)
+         * @type {Car[]}
+         */
+        const data=this.state.cars.filter(x=>
+            //car brand is included or no filter for brand is selected
+            (!this.props.brands.length ||this.props.brands.includes(x.brand))
+            //car category is included or no filter for category is selected
+            && (!this.props.categories.length || this.props.categories.includes(x.category)));
 
+        // column configuration for SmartTable
         const columns = [{
             dataField: 'id',
             text: 'ID',
@@ -43,11 +55,9 @@ class CarTable extends  React.Component{
         },{
             dataField: 'price',
             text: 'Minimum daily price',
-            sort: true
+            sort: true,
+            formatter  : getEuro
         }];
-
-        if(this.state.loading)
-            return <ProgressBar animated now={100}/>;
         return <SmartTable data={data} columns={columns}/>
     }
 

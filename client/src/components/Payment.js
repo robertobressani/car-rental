@@ -4,18 +4,18 @@ import {getEuro} from "../utils/currency";
 import Cards from "react-credit-cards";
 import React from "react";
 
+/**
+ * Component for the generation of the modal to contain the payment form
+ */
 function PaymentDialog(props) {
     if (!props.configuration.isValid())
         return <Redirect to={"/configurator"}/>;
     return <Modal show={true}>
         <Modal.Header>
             <Modal.Title>Insert your payment data <h6>Confirm the payment of {getEuro(props.price)}</h6>
-
             </Modal.Title>
-
         </Modal.Header>
         {props.error ?
-
             <Alert variant="danger">
                 <h6>{props.error}</h6>
             </Alert>
@@ -25,12 +25,12 @@ function PaymentDialog(props) {
             <PaymentForm card={props.card}  update={props.updateCredit} focus={props.updateFocus}
                          validate={props.validate}/>
         </Modal.Body>
-
-
-
     </Modal>;
 }
 
+/**
+ * Component that shows an example credit card and the form to insert the infos
+ */
 function PaymentForm(props) {
     return <>
         <Cards

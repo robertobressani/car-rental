@@ -5,8 +5,9 @@ import {Jumbotron, ProgressBar, Alert} from "react-bootstrap";
 import API from '../api/API.js';
 import RentalTable from "./RentalTable";
 
-//TODO remove all imports unused
-
+/**
+ * Component that manages all the state for /rentals route
+ */
 function Rentals(props) {
 	document.title="Rent.com - Your rentals";
 	const value = useContext(AuthenticationContext);
@@ -17,25 +18,34 @@ function Rentals(props) {
 	const [loading, setLoading] = useState([]);
 	const [error, setError] = useState(false);
 
-	function deleteR(x) {
-		setLoading([...loading, x]);
-		API.deleteRental(x).then((res)=>{
+	/**
+	 * internal function used to call API method and manage loading state variation
+	 * @param id: the rental ID
+	 */
+	function deleteR(id) {
+		setLoading([...loading, id]);
+		API.deleteRental(id).then((res)=>{
 			if(res)
-				setFuture([...futureRentals].filter(rental=>rental.id!==x));
+				setFuture([...futureRentals].filter(rental=>rental.id!==id));
 			else
-				setError(`Impossible to delete car rental number ${x}`);
+				setError(`Impossible to delete car rental number ${id}`);
 		}).catch((err)=>{
 			if(err===401)
 				props.unLog();
 			else
 				//should not come hear, unless network error
-				setError(`Impossible to delete car rental number ${x}`);
+				setError(`Impossible to delete car rental number ${id}`);
 		}).finally(()=>
 			//removing infinite looping (if network error) spinner
-			setLoading([...loading].filter(load=>load!==x)));
+			setLoading([...loading].filter(load=>load!==id)));
 	}
 
 	useEffect(() => {
+		/**
+		 * used instead of ComponentDidMount in a function component
+		 */
+
+		//load all rentals
 		Promise.all([API.getRentals(true), API.getRentals(false)]).then(result=>{
 			setPast(result[0]);
 			setFuture(result[1]);
@@ -45,7 +55,7 @@ function Rentals(props) {
 				//although it is a dependency, it is constant, I didn't put it in the dependencies array
 				props.unLog();
 			else
-				//should not come hear, unless network error
+				//should not come hear, unless network or server error
 				setError(`Impossible to load  rentals`);
 		}).finally(()=> {
 			setLoadFuture(true);

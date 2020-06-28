@@ -5,6 +5,9 @@ import {getEuro} from "../utils/currency";
 import {Link} from "react-router-dom";
 import React from "react";
 
+/**
+ * Component that manages the form of the configurator
+ */
 function ConfiguratorForm(props) {
     return <Form className="row " ref={props.formRef}>
         <Form.Group className="col-12 col-md-4">
@@ -61,6 +64,9 @@ function ConfiguratorForm(props) {
     </Form>
 }
 
+/**
+ * Component that shows number of available cars and relative price
+ */
 function AvailableCar(props) {
     if (props.error)
         return <Alert variant="danger" dismissible onClose={props.cancelError}>
@@ -72,29 +78,29 @@ function AvailableCar(props) {
     else if (props.price_num.available > 0)
         return <Alert variant="success">
             <Alert.Heading>We've
-                found {props.price_num.available > 1 ? props.price_num.available + " " : "a "} car{props.price_num.available > 1 ? "s" : ""} for
-                you!</Alert.Heading>
+                found {props.price_num.available > 1 ? props.price_num.available + " " : "a "} car
+                {props.price_num.available > 1 ? "s" : ""} for you!</Alert.Heading>
             <p>
-                There {props.price_num.available > 1 ? "are" : "is"} {props.price_num.available > 1 ? props.price_num.available + " " : "a "}
+                There {props.price_num.available > 1 ? "are" : "is"} {props.price_num.available > 1 ?
+                            props.price_num.available + " " : "a "}
                 car{props.price_num.available > 1 ? "s" : ""} that satisf{props.price_num.available > 1 ? "y " : "ies "}
                 your search, available at <strong>{getEuro(props.price_num.price)} </strong>
             </p>
             <hr/>
             <div className="d-flex justify-content-end">
-                <Link to="/configurator/pay"><Button variant="outline-success">
+                <Link to="/configurator/payment"><Button variant="outline-success">
                     Proceed to payment
                 </Button></Link>
             </div>
         </Alert>;
     else return <Alert variant="danger">
             <Alert.Heading>There are no cars for you!</Alert.Heading>
-            <p>
-                We are sorry, we cannot rent any car according to the search you have perfomed.
-            </p>
+            <p> We are sorry, we cannot rent any car according to the search you have performed. </p>
             <hr/>
             <div className="d-flex justify-content-end">
                 <Button variant="outline-danger">
                     Notify me when a car is available
+                    {/*Simple example button, this functionality is not implemented*/}
                 </Button>
             </div>
         </Alert>;

@@ -6,10 +6,12 @@ import paginationFactory, {
 import {Row} from "react-bootstrap";
 import BootstrapTable from "react-bootstrap-table-next";
 import React from "react";
-
 import 'react-bootstrap-table-next/dist/react-bootstrap-table2.min.css';
 import 'react-bootstrap-table2-paginator/dist/react-bootstrap-table2-paginator.min.css';
 
+/**
+ *  Components that renders a "smart table", with pagination and sorting
+ */
 function SmartTable(props){
     const options = {
         custom: true,

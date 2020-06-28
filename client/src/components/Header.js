@@ -4,7 +4,9 @@ import {Switch, Route, Link, NavLink} from 'react-router-dom';
 import Logo from "./img/logo.svg"
 import AuthenticationContext from "./AuthenticationContext.js";
 
-
+/**
+ * Component that renders the Header of the page
+ */
 function Header() {
     let button;
     const value = useContext(AuthenticationContext);
@@ -24,10 +26,11 @@ function Header() {
     else
         button = <Link to="/login"><Button variant="success">{"Login"} </Button></Link>;
     return <>
-        <Navbar  collapseOnSelect bg="dark" expand="md" variant="dark" className="row justify-content-between" sticky="top">
-            <Col md={0} xs={1} className=" d-md-none">
-                <Navbar.Toggle   aria-controls="nav-panel" />
-            </Col>
+            <Navbar  collapseOnSelect bg="dark" expand="md" variant="dark" className="row justify-content-between" sticky="top">
+                {value.loggedIn ? <Col md={0} xs={1} className=" d-md-none">
+                    <Navbar.Toggle aria-controls="nav-panel"/>
+                </Col> : null
+                }
             <Col xs={1}>
                 <Image src={Logo} height={50} rounded/>
             </Col>
@@ -53,24 +56,25 @@ function Header() {
     </>;
 }
 
+/**
+ * Generates the navigation links for logged users
+ */
 function NavigationPanel(props) {
     const content=<><Nav.Item> {/*href is put to make collapseOnSelect functionalities working*/}
-        <Nav.Link as={NavLink}  activeClassName="bg-white" className="bg-grey text-dark"  to="/cars">All cars  </Nav.Link>
+        <Nav.Link as={NavLink}  activeClassName="bg-white" className="bg-grey text-dark" href="/cars"  to="/cars">All cars  </Nav.Link>
     </Nav.Item>
     <Nav.Item>
-        {/*TODO fix active nav link while redirecting from /configurator to /rentals*/ }
-        <Nav.Link as={NavLink}  activeClassName="bg-white" className="bg-grey text-dark"  to="/configurator">Rental configurator  </Nav.Link>
+        <Nav.Link as={NavLink}  activeClassName="bg-white" className="bg-grey text-dark"  href="/configurator" to="/configurator">Rental configurator  </Nav.Link>
     </Nav.Item>
     <Nav.Item>
-        <Nav.Link as={NavLink}  activeClassName="bg-white" className="bg-grey text-dark"  to="/rentals">List of all rentals </Nav.Link>
+        <Nav.Link as={NavLink}  activeClassName="bg-white" className="bg-grey text-dark" href="/rentals"  to="/rentals">List of all rentals </Nav.Link>
     </Nav.Item></>;
     if (props.show && !props.mobile)
         //user is logged in, navigation panel should be shown
         return <Nav variant="tabs"  className="d-none d-md-flex " >
             {content}
         </Nav>;
-    else if(props.show && props.mobile)
-        //TODO see findDOMnode warning
+    if(props.show && props.mobile)
         return <Navbar.Collapse  >
             <Nav className={"d-inline d-md-none col-12"} id="nav-panel">
                 {content}

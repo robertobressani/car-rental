@@ -4,17 +4,25 @@ import API from "../api/API";
 import CarFilterBox from "./CarFilters";
 import CarTable from "./CarTable";
 
-
+/**
+ * Component that shows the page of all the cars available
+ */
 class CarList extends React.Component {
     constructor() {
         super();
+        //setting page title
         document.title="Rent.com - Our cars"
         this.state = {
             loading: true,
+            //all categories
             categories: ["A", "B", "C", "D", "E"],
+            //categories selected to be shown
             selectedCategories: [],
+            //all brands
             brands: [],
+            //brands selected to be shown
             selectedBrands: [],
+            //will contain any error message
             error: false
         };
     }
@@ -25,7 +33,6 @@ class CarList extends React.Component {
     componentDidMount() {
        API.getBrands().then(result => this.setState({brands: result, loading: false}))
            .catch(error => this.setState({error: error.msg}));
-
     }
 
     render() {

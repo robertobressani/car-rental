@@ -3,19 +3,25 @@ import {Link, Redirect} from 'react-router-dom';
 import AuthenticationContext from './AuthenticationContext.js';
 import {Alert, Button, Col, Form, Jumbotron, OverlayTrigger, Popover, ProgressBar, Row, Spinner} from "react-bootstrap";
 
+/**
+ * Component that manages the login page
+ */
 function Login() {
     const value = useContext(AuthenticationContext);
     document.title="Rent.com - Enter your account";
     if (!value.verifiedLogin)
         /**
          * While waiting for the login verification show waiting status
-         * */
+         */
         return <Jumbotron className="jumbotron-space"><ProgressBar animated now={100}/></Jumbotron>;
     if (value.loggedIn)
         return <Redirect to={"/configurator"}/>
     return <LoginForm login={value.login}/>;
 }
 
+/**
+ * Generates the form for the login and manages its state
+ */
 class LoginForm extends React.Component {
     constructor(props) {
         super(props);

@@ -26,22 +26,18 @@ class Configurator extends React.Component {
     }
 
     /**
-     * form has changed: must load the price and availability
+     * form has changed or login status is changed: must load the price and availability
      */
     componentDidUpdate() {
         //loading of new data must be performed only when a submission hasn't been already done
         if (!this.state.submitted) {
-
             if (this.state.configuration.isValid()) {
                 //console.log("that's the right time to update");
-
-
                 this.setState({submitted: true, loading: true});
                 let configuration = Object.assign(new Configuration(), {...this.state.configuration});
                 if (configuration.unlimited)
                     //make no sense have kilometers per day set to a number
                     configuration.kilometer = 0;
-
                 this.setState({error:false});
                 API.searchConfig(configuration).then(result => {
                     if (result)
@@ -55,8 +51,6 @@ class Configurator extends React.Component {
                         this.setState({error: err.msg});
                     }
                 }).finally(() => this.setState({loading: false}));
-
-
             } else if (this.state.configuration.isCompleted() || this.state.price_num) {
                 //Prompting errors through form validation of HTML if all fields are filled in or a result has been obtained
                 // but configuration is not valid
@@ -67,7 +61,6 @@ class Configurator extends React.Component {
             //payment performed or user has logout,
             //      clearing all the temporary states and redirecting to the list of rentals
             this.setState({submitted: true, completed:false, price_num: false, configuration: new Configuration()});
-
     }
 
     /**
@@ -85,7 +78,6 @@ class Configurator extends React.Component {
             else if (name === "unlimited")
                 //if setting up unlimited flag, also kilometer must be updated properly
                 configuration.kilometer = value ? 150 : 149;
-
             //setting submitted= false, so that a new load can be performed if valid
             return {configuration: configuration, submitted: false};
         });
@@ -110,7 +102,7 @@ class Configurator extends React.Component {
     }
 
     /**
-     * Validate payment information on form submission
+     * Validate payment information on form submission and performs the request to the server
      */
     checkPayment = (e) => {
         e.preventDefault();
@@ -131,7 +123,7 @@ class Configurator extends React.Component {
                     this.setState({error_payment:"Unable to process the request, please retry"});
                 }
             }).catch(err => {
-                //user is not loggedin anymore
+                //user is not logged-in anymore
                 if (err === 401)
                     this.props.unLog();
             });
@@ -168,7 +160,8 @@ class Configurator extends React.Component {
                                    updateFocus={(e) => this.updateFocusCard(e)}
                                    updateCredit={(name, value) => this.updateCardValue(name, value)}
                                    price={this.state.price_num.price} validate={this.checkPayment}
-                                   configuration={this.state.configuration /*needed to detect if the configuration is valid*/}/>
+                                   configuration={this.state.configuration /*needed to detect if the configuration is valid
+                                   (if not, redirects to the configurator)*/}/>
                 </Route>
             </>;
         }}</AuthenticationContext.Consumer>;
