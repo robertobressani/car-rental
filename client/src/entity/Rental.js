@@ -2,7 +2,7 @@ import moment from 'moment';
 import Car from './Car.js';
 
 /**
- * Class to represent a Rental performed by a user. Contains also the assigne car
+ * Class to represent a Rental performed by a user. Contains also the assigned car
  */
 export default class Rental{
     constructor(id,start, end, kilometer, unlimited, age, extra_drivers, insurance, car ) {
