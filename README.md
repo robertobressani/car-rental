@@ -1,5 +1,4 @@
-# Exam #1: "Car rental"
-## Student: s270079 BRESSANI Roberto
+# Car Rental Web App
 
 ## React client application routes
 
