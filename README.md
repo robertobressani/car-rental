@@ -1,5 +1,15 @@
 # Car Rental Web App
 
+## Instruction
+
+Run:
+
+    cd server; npm install; nodemon
+  
+After the server has loaded, on another terminal run:
+
+    cd client; npm install; npm start
+
 ## React client application routes
 
 - Route `/` (and all non-matching routes):  will redirect to `/cars`
